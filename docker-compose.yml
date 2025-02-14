@@ -1,0 +1,29 @@
+services:
+  app-dashboard:
+    container_name: node-express-dashboard
+    build:
+      context: .
+      dockerfile: prod.Dockerfile
+    restart: always
+    environment:
+      JWT_KEY: "ia*DKhj.g9@ho¡y729i-_¿!n3YjDhsL&3xVhGo"
+    depends_on:
+      - db-dashboard
+    volumes:
+      - ./app/logs:/usr/src/logs
+      - /usr/src/node_modules
+    ports:
+      - "9004:3000"
+    links:
+    - "db-dashboard:mongodb"
+
+  db-dashboard:
+    container_name: mongodb-gestor-dashboard
+    restart: always
+    image: mongo:8.0.0-rc9
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=omg_dashboard_user
+      - MONGO_INITDB_ROOT_PASSWORD=TBQNXOCYmeQ_84bmPTl4n9
+      - MONGO_INITDB_DATABASE=omg_dashboard
+    volumes: 
+      - ./mongodashboard:/data/db

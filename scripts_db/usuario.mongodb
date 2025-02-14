@@ -1,0 +1,36 @@
+use("kalaja");
+
+db.usuarios.insertMany([
+    {
+        "token": "",
+        "clave_estatus": "1",
+        "nombre_estatus": "Habilitado",
+        "justificacion_estatus": "",
+        "correo": "superadmin@kalaja.com",
+        "contrasena": "1ca1af9fd5198cc7e9e8da6dfa784cef08bb2cbe4b878117112f3c7829e47f79",
+        "nombre": "Super",
+        "ap_paterno": "Dashboard",
+        "ap_materno": "Bknd",
+        "cargo": "",
+        "telefono": "7894561325",
+        "id_rol": "", 
+        "clave_rol": 27, 
+        "nombre_rol":"Superadministrador"
+    },
+    {
+        "token": "",
+        "clave_estatus": "1",
+        "nombre_estatus": "Habilitado",
+        "justificacion_estatus": "",
+        "correo": "admin@dashboard.com",
+        "contrasena": "1ca1af9fd5198cc7e9e8da6dfa784cef08bb2cbe4b878117112f3c7829e47f79",
+        "nombre": "Admin",
+        "ap_paterno": "Dashboard",
+        "ap_materno": "Bknd",
+        "cargo": "",
+        "telefono": "7894561325",
+        "id_rol": "", 
+        "clave_rol": 35, 
+        "nombre_rol":"Administrador"
+    }
+]);
