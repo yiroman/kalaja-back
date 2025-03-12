@@ -40,6 +40,11 @@ router.get('/menu', (req, res) => {
                     iconName: 'user',
                     route: '/usuarios',
                 },
+                {
+                    displayName: 'Pedidos',
+                    iconName: 'box',
+                    route: '/pedidos',
+                },
             ];
             break;
         // Administrador

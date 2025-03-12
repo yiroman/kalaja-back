@@ -4,7 +4,6 @@ const express = require('express'),
     multer = require('multer'),
     log = require('../generales/log'),
     UsuarioModel = require('../models/UsuarioModel'),
-    BitacoraOperadoresModel = require("../models/BitacoraOperadoresModel"),
     {middleware_token, middleware_roles} = require('../config/middlewares'),
     {inicio_sesion_validator} = require('../utils/validators')
 

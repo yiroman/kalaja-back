@@ -24,14 +24,14 @@ const usuariosRouter = require('./routes/usuariosRouters');
 const rolesRouter = require('./routes/rolesRouters')
 const dependenciasRouter = require('./routes/dependenciasRouters')
 const cacheRouter = require('./routes/cacheServicesRouters')
-const observaciones = require('./routes/observacionesRouters')
-const tramites = require('./routes/tramitesRouters')
-const periodos = require('./routes/periodosRouters')
-const pdf = require('./routes/pdfRouters')
-const ceroPapel = require('./routes/ceropapelRouters')
-const tramitePublico = require('./routes/tramitePublicoRouters')
-const comentarios = require('./routes/comentariosRouters')
-const omisionesTramite = require('./routes/omisionesRouters')
+// const observaciones = require('./routes/observacionesRouters')
+// const tramites = require('./routes/tramitesRouters')
+// const periodos = require('./routes/periodosRouters')
+// const pdf = require('./routes/pdfRouters')
+// const ceroPapel = require('./routes/ceropapelRouters')
+// const tramitePublico = require('./routes/tramitePublicoRouters')
+// const comentarios = require('./routes/comentariosRouters')
+// const omisionesTramite = require('./routes/omisionesRouters')
 
 var app = express();
 app.set('trust proxy', 1);
@@ -53,8 +53,8 @@ if(app.get('env') ==='dev'){
 const dominiosPermitidos = () => {
 	if(app.get('env') === 'production'){
 		return [
-			'https://sipramert.tlaxcala.gob.mx',
-			'https://tuconsultaciudadanapmr.tlaxcala.gob.mx'
+			'http://localhost:4200',
+			'http://localhost:4201'
 		]
 	}
 	else {
@@ -105,13 +105,13 @@ app.use(`${prefixInterna}usuarios`, usuariosRouter)
 app.use(`${prefixInterna}roles`, rolesRouter)
 app.use(`${prefixInterna}dependencias`, dependenciasRouter)
 app.use(`${prefixInterna}cache`, cacheRouter)
-app.use(`${prefixInterna}observaciones`, observaciones)
-app.use(`${prefixInterna}tramites`, tramites)
-app.use(`${prefixInterna}periodos`, periodos)
-app.use(`${prefixInterna}pdf`, pdf)
-app.use(`${prefixInterna}cero_papel`, ceroPapel)
-app.use(`${prefixInterna}comentarios`, comentarios)
-app.use(`${prefixInterna}omisiones`, omisionesTramite)
+// app.use(`${prefixInterna}observaciones`, observaciones)
+// app.use(`${prefixInterna}tramites`, tramites)
+// app.use(`${prefixInterna}periodos`, periodos)
+// app.use(`${prefixInterna}pdf`, pdf)
+// app.use(`${prefixInterna}cero_papel`, ceroPapel)
+// app.use(`${prefixInterna}comentarios`, comentarios)
+// app.use(`${prefixInterna}omisiones`, omisionesTramite)
 
 
 

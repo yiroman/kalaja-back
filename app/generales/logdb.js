@@ -1,7 +1,6 @@
 const winston = require("../config/winston"),
     jwt = require("jsonwebtoken"),
     mongoose = require('mongoose');
-    BitacoraOperadoresModel = require('../models/BitacoraOperadoresModel');
 
 const logdb = (req, accion, tipo) => {
     const token = req.get('Authorization')?.replace(/^Bearer\s+/, "");

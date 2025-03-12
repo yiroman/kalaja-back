@@ -17,10 +17,7 @@ const UsuariosSchema = mongoose.Schema({
     ap_paterno: { type: String, required: true },
     ap_materno: { type: String, required: true },
 
-    cargo: {type: String, required: true }, 
 
-    clave_dependencia: { type: Number, required: true },
-    nombre_dependencia: { type: String, required: true },
 
     telefono: { type: String, required: true },
    
