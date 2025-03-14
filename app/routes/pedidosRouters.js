@@ -30,7 +30,7 @@ router.post('/',  async (req, res) => {
             const subtotal = p.cantidad * p.precioUnitario;
             total += subtotal;
             return {
-                producto: p.id_producto,
+                producto: p.producto,
                 cantidad: p.cantidad,
                 precioUnitario: p.precioUnitario,
                 subtotal
@@ -74,6 +74,81 @@ router.get('/', async (req, res) => {
     }
 });
 
+
+//actualizar un pedido
+router.put('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('📌 ID recibido para actualizar:', id);
+
+        if (!id) {
+            return res.status(400).json({ message: 'ID del pedido no proporcionado' });
+        }
+
+        // Verificar si el pedido existe antes de actualizar
+        const pedidoExistente = await PedidoModel.findById(id);
+        if (!pedidoExistente) {
+            return res.status(404).json({ message: 'Pedido no encontrado' });
+        }
+
+        // 🔹 Usar `$set` para actualizar correctamente el array de productos
+        const pedidoActualizado = await PedidoModel.findOneAndUpdate(
+            { _id: id },
+            { $set: req.body }, // 🔥 Esto asegura que los productos se actualicen correctamente
+            { new: true, runValidators: true }
+        );
+
+        if (!pedidoActualizado) {
+            return res.status(500).json({ message: 'No se pudo actualizar el pedido' });
+        }
+
+        console.log('✅ Pedido actualizado:', pedidoActualizado);
+
+        res.json({ message: 'Pedido actualizado con éxito', pedido: pedidoActualizado });
+
+    } catch (error) {
+        console.error('❌ Error al actualizar el pedido:', error);
+        res.status(500).json({ message: 'Error al actualizar el pedido', error: error.message || error });
+    }
+});
+
+
+//cambiar el estado de un pedido
+router.put('/:id/estado', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { estado } = req.body;
+
+        if (!id || !estado) {
+            return res.status(400).json({ message: 'ID del pedido y estado no proporcionados' });
+        }
+
+        // Verificar si el pedido existe antes de actualizar
+        const pedidoExistente = await PedidoModel.findById(id);
+        if (!pedidoExistente) {
+            return res.status(404).json({ message: 'Pedido no encontrado' });
+        }
+
+        // Actualizar el estado del pedido
+        const pedidoActualizado = await PedidoModel.findOneAndUpdate(
+            { _id: id },
+            { estado },
+            { new: true, runValidators: true }
+        );
+
+        if (!pedidoActualizado) {
+            return res.status(500).json({ message: 'No se pudo actualizar el estado del pedido' });
+        }
+
+        console.log('✅ Estado del pedido actualizado:', pedidoActualizado);
+
+        res.json({ message: 'Estado del pedido actualizado con éxito', pedido: pedidoActualizado });
+
+    } catch (error) {
+        console.error('❌ Error al actualizar el estado del pedido:', error);
+        res.status(500).json({ message: 'Error al actualizar el estado del pedido', error: error.message || error });
+    }
+});
 
 
 
