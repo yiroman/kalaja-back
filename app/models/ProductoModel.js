@@ -10,11 +10,11 @@ const ProductoSchema = new mongoose.Schema({
         nombre: { type: String, required: true }, // Ej: "Color", "Talla", "Capacidad"
         opciones: [{
             valor: { type: String, required: true }, // Ej: "Negro", "M", "500ml"
-            stock: { type: Number, required: true, default: 0 } // Stock de esta variante
+            stock: { type: Number, required: true, default: 0 }, // Stock de esta variante
+            imagen: { type: String },
         }]
     }],
     labels: [{ type: String }],
-    categorias: [{ type: String }],
     subcategorias: [{ type: String }],
 }, { timestamps: true });
 
