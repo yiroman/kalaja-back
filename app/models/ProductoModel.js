@@ -1,22 +1,21 @@
 const mongoose = require('mongoose');
 
-const VarianteSchema = new mongoose.Schema({
-    genero: { type: String, required: true }, // Hombre, Mujer, Unisex
-    tipoManga: { type: String, required: true }, // Corta, Larga
-    colores: [{
-        color: { type: String, required: true },
-        stock: { type: Number, required: true, default: 0 }
-    }]
-}, { _id: false });
-
 const ProductoSchema = new mongoose.Schema({
-    nombre: { type: String, required: true },
-    descripcion: { type: String },
-    precio: { type: Number, required: true },
-    categoria: { type: String, required: true },
-    imagen: { type: String },
-    variantes: [VarianteSchema] // Lista de variantes disponibles
+    nombre: { type: String, required: true }, // Nombre del producto
+    descripcion: { type: String }, // Descripción del producto
+    precio: { type: Number, required: true }, // Precio base del producto
+    categoria: { type: String, required: true }, // Ej: "Ropa", "Termos", "Tazas"
+    imagen: { type: String }, // URL de la imagen del producto
+    variantes: [{
+        nombre: { type: String, required: true }, // Ej: "Color", "Talla", "Capacidad"
+        opciones: [{
+            valor: { type: String, required: true }, // Ej: "Negro", "M", "500ml"
+            stock: { type: Number, required: true, default: 0 } // Stock de esta variante
+        }]
+    }],
+    labels: [{ type: String }],
+    categorias: [{ type: String }],
+    subcategorias: [{ type: String }],
 }, { timestamps: true });
 
-
-module.exports = ProductoModel =  mongoose.model('productos', ProductoSchema);
+module.exports = ProductoModel = mongoose.model('productos', ProductoSchema);
