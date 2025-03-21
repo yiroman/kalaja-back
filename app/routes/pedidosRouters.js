@@ -12,15 +12,15 @@ const fs = require("fs");
 const { crearError } = require('../utils/errores');
 
 
-router.post('/',  async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const {productos, metodoPago, fechaEntrega, notas, cliente } = req.body;
+        const { productos, metodoPago, fechaEntrega, notas, cliente } = req.body;
 
         // Validar que se envíen los datos requeridos
-        if ( !productos || productos.length === 0) {
+        if (!productos || productos.length === 0) {
             return res.status(400).json({
                 code: 400,
-                message: "Faltan datos obligatorios"
+                message: "Faltan datos obligatorios: productos es requerido"
             });
         }
 
@@ -31,9 +31,12 @@ router.post('/',  async (req, res) => {
             total += subtotal;
             return {
                 producto: p.producto,
+                variante: p.variante || "", // Agregamos la variante (ej. color)
+                opcion: p.opcion || "", // Agregamos la opción (ej. tipo de impresión)
                 cantidad: p.cantidad,
                 precioUnitario: p.precioUnitario,
-                subtotal
+                subtotal,
+                imagenDiseno: p.imagenDiseno || null // Guardamos la imagen si está presente
             };
         });
 
@@ -48,8 +51,14 @@ router.post('/',  async (req, res) => {
             cliente
         });
 
+        // Guardar en la base de datos
         await nuevoPedido.save();
-        return res.status(201).json(nuevoPedido);
+
+        return res.status(201).json({
+            code: 201,
+            message: "Pedido creado exitosamente",
+            pedido: nuevoPedido
+        });
 
     } catch (e) {
         console.error(e);
@@ -59,6 +68,7 @@ router.post('/',  async (req, res) => {
         });
     }
 });
+
 
 
 router.get('/', async (req, res) => {
@@ -150,6 +160,76 @@ router.put('/:id/estado', async (req, res) => {
     }
 });
 
+//obtener un pedido por id
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: 'ID del pedido no proporcionado' });
+        }
+
+        const pedido = await PedidoModel.findById(id);
+        if (!pedido) {
+            return res.status(404).json({ message: 'Pedido no encontrado' });
+        }
+
+        res.json(pedido);
+
+    } catch (error) {
+        console.error('❌ Error al obtener el pedido:', error);
+        res.status(500).json({ message: 'Error al obtener el pedido', error: error.message || error });
+    }
+});
+
+
+
+// //*****************************************************
+// //************* FOTOS DE DISEÑO PRODUCCTO *************
+
+
+const storageImgDiseno = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/diseno');
+    },
+    filename: function (req, file, cb) {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const partes = file.mimetype.split("/");
+        cb(null, uniqueName + "." + partes[1]);
+    }
+});
+
+
+const uploadImgDiseno = multer({
+    storage: storageImgDiseno,
+    fileFilter: (req, file, cb) => {
+        const extensiones = ['jpeg', 'jpg', 'png'];
+        const partes = file.mimetype.split("/");
+        const resultado = extensiones.includes(partes[1]);
+        if (resultado) {
+            cb(null, true);
+        }
+        else {
+            cb(new Error('Extensión de archivo no permitida'));
+        }
+    }
+});
+
+
+router.post('/diseno',
+    uploadImgDiseno.single('imagenDiseno'),
+        async (req, res) => {
+            try {
+                if (!req.file) {
+                    return res.status(400).json({ message: 'No se cargó la imagen del diseño' });
+                }
+
+                return res.json({ message: 'Imagen de diseño cargada exitosamente', filename: req.file.filename });
+            } catch (error) {
+                console.error('❌ Error al cargar la imagen del diseño:', error);
+                res.status(500).json({ message: 'Error al cargar la imagen del diseño', error: error.message || error });
+            }
+        }
+    );
 
 
 
