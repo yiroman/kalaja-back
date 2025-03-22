@@ -3,7 +3,7 @@ services:
     container_name: node-express-dashboard
     build:
       context: .
-      dockerfile: prod.Dockerfile
+      dockerfile: dev.Dockerfile
     restart: always
     environment:
       JWT_KEY: "ia*DKhj.g9@ho¡y729i-_¿!n3YjDhsL&3xVhGo"
