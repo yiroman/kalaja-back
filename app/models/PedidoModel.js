@@ -17,12 +17,12 @@ const PedidoSchema = new mongoose.Schema({
     fechaEntrega: { type: Date }, // Fecha de entrega estimada
     estado: {
         type: String,
-        enum: ['pendiente', 'en producción', 'finalizado', 'cancelado'],
-        default: 'pendiente'
+        enum: ['Pendiente', 'En Producción', 'Finalizado', 'Cancelado'],
+        default: 'Pendiente'
     }, // Estado del pedido
     metodoPago: {
         type: String,
-        enum: ['Efectivo', 'transferencia', 'tarjeta', 'MSI'],
+        enum: ['Efectivo', 'Transferencia', 'Tarjeta', 'MSI'],
         required: true
     }, // Método de pago usado
     cuentaDestino: { type: mongoose.Schema.Types.ObjectId, ref: 'Cuenta' }, // Cuenta donde se recibió el pago

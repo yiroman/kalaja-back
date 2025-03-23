@@ -170,7 +170,7 @@ router.post('/editar_foto_producto',
 
         if(req.file){
             if(nombre_anterior){
-                fs.unlink(`./uploads/imagenProducto/${nombre_anterior}`, (error) =>{
+                fs.unlink(`./uploads/producto/${nombre_anterior}`, (error) =>{
                     if(error){
                         res.send(error)
                     }
@@ -178,9 +178,36 @@ router.post('/editar_foto_producto',
 
             }
         }else{
-            crearError(res, "nose pudo cargar la imagen")
+            crearError(res, "no se pudo cargar la imagen")
         }
 
     });
+
+
+router.put('/:id/stock', async (req, res) => {
+    const { id } = req.params;
+    const cambios = req.body; // arreglo de combinaciones { varianteId, opcionId, nuevoStock, nuevoPrecio }
+
+    try {
+        const producto = await ProductoModel.findById(id);
+
+        cambios.forEach(cambio => {
+            const variante = producto.variantes.id(cambio.varianteId);
+            const opcion = variante.opciones.id(cambio.opcionId);
+
+            if (opcion) {
+                opcion.stock += parseInt(cambio.nuevoStock);
+                if (opcion.precioCompra !== cambio.nuevoPrecio) {
+                    opcion.precioCompra = cambio.nuevoPrecio;
+                }
+            }
+        });
+
+        await producto.save();
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
 
 module.exports = router;

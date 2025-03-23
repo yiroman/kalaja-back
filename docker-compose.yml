@@ -14,8 +14,6 @@ services:
       - /usr/src/node_modules
     ports:
       - "9004:3000"
-    links:
-      - "db-dashboard:mongodb"
 
   db-dashboard:
     container_name: mongodb-gestor-dashboard
