@@ -232,5 +232,31 @@ router.post('/diseno',
     );
 
 
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: 'ID del pedido no proporcionado' });
+        }
+
+        const pedido = await PedidoModel.findByIdAndDelete(id);
+        if (!pedido) {
+            return res.status(404).json({ message: 'Pedido no encontrado' });
+        }
+
+        // Eliminar la imagen del diseño si existe
+        const pathImagen = `./uploads/diseno/${pedido.imagenDiseno}`;
+        if (fs.existsSync(pathImagen)) {
+            fs.unlinkSync(pathImagen);
+        }
+
+        res.json({ message: 'Pedido eliminado con éxito', pedido });
+
+    } catch (error) {
+        console.error('❌ Error al eliminar el pedido:', error);
+        res.status(500).json({ message: 'Error al eliminar el pedido', error: error.message || error });
+    }
+})
+
 
 module.exports = router;
