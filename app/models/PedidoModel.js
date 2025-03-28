@@ -11,6 +11,7 @@ const PedidoSchema = new mongoose.Schema({
         precioUnitario: { type: Number, required: true }, // Precio del producto en el momento de la compra
         subtotal: { type: Number, required: true }, // Calculado como cantidad * precioUnitario
         imagenDiseno: { type: String },// URL de la imagen del diseño
+        precioVenta: { type: Number }, // Precio de compra del producto
 
 
         // CALCULO DE COSTOS
