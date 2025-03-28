@@ -23,12 +23,41 @@ router.post('/', async (req, res) => {
             });
         }
 
-        const total = productos.reduce((acc, p) => acc + (p.subtotal || 0), 0);
+        // Inicializamos los totales
+        let total = 0;
+        let totalCosto = 0;
+        let totalComision = 0;
+        let utilidadReal = 0;
 
+        // Procesamos productos y acumulamos valores
+        const productosProcesados = productos.map(p => {
+            const subtotal = p.subtotal ?? p.cantidad * p.precioUnitario;
+            const costo = p.totalCosto ?? 0;
+            const comision = p.totalComision ?? 0;
+            const utilidad = subtotal - costo;
+
+            total += subtotal;
+            totalCosto += costo;
+            totalComision += comision;
+            utilidadReal += utilidad;
+
+            return {
+                ...p,
+                subtotal,
+                totalCosto: costo,
+                totalComision: comision,
+                utilidadReal: utilidad
+            };
+        });
+
+        // Crear el nuevo pedido
         const nuevoPedido = new PedidoModel({
             numeroPedido: `PED-${Date.now()}`,
-            productos,
+            productos: productosProcesados,
             total,
+            totalCosto,
+            totalComision,
+            utilidadReal,
             metodoPago,
             fechaEntrega,
             lugarEntrega,
@@ -52,6 +81,7 @@ router.post('/', async (req, res) => {
         });
     }
 });
+
 
 
 
