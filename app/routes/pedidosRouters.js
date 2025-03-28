@@ -14,9 +14,8 @@ const { crearError } = require('../utils/errores');
 
 router.post('/', async (req, res) => {
     try {
-        const { productos, metodoPago, fechaEntrega, notas, cliente } = req.body;
+        const { productos, metodoPago, fechaEntrega, notas, cliente, lugarEntrega } = req.body;
 
-        // Validar que se envíen los datos requeridos
         if (!productos || productos.length === 0) {
             return res.status(400).json({
                 code: 400,
@@ -24,34 +23,19 @@ router.post('/', async (req, res) => {
             });
         }
 
-        // Calcular el total del pedido
-        let total = 0;
-        const productosProcesados = productos.map(p => {
-            const subtotal = p.cantidad * p.precioUnitario;
-            total += subtotal;
-            return {
-                producto: p.producto,
-                variante: p.variante || "", // Agregamos la variante (ej. color)
-                opcion: p.opcion || "", // Agregamos la opción (ej. tipo de impresión)
-                cantidad: p.cantidad,
-                precioUnitario: p.precioUnitario,
-                subtotal,
-                imagenDiseno: p.imagenDiseno || null // Guardamos la imagen si está presente
-            };
-        });
+        const total = productos.reduce((acc, p) => acc + (p.subtotal || 0), 0);
 
-        // Crear el nuevo pedido
         const nuevoPedido = new PedidoModel({
-            numeroPedido: `PED-${Date.now()}`, // Genera un identificador único
-            productos: productosProcesados,
+            numeroPedido: `PED-${Date.now()}`,
+            productos,
             total,
             metodoPago,
             fechaEntrega,
+            lugarEntrega,
             notas,
             cliente
         });
 
-        // Guardar en la base de datos
         await nuevoPedido.save();
 
         return res.status(201).json({
@@ -68,6 +52,7 @@ router.post('/', async (req, res) => {
         });
     }
 });
+
 
 
 
