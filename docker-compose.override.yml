@@ -1,0 +1,19 @@
+services:
+  app-dashboard:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+      MONGO_URL: "mongodb://omg_dashboard_user:TBQNXOCYmeQ_84bmPTl4n9@db-dashboard:27017/kalaja?authSource=admin&readPreference=primary&ssl=false&directConnection=true"
+    volumes:
+      - mongodashboard:/data/db
+      - ./app/:/usr/src
+      - ./app/logs/:/usr/src/logs
+    ports:
+      - "3020:3000"
+      - "9240:9229"
+  db-dashboard:
+    ports:
+      - "27317:27017"
+volumes:
+  mongodashboard:
