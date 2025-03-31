@@ -56,7 +56,8 @@ const dominiosPermitidos = () => {
 	if(app.get('env') === 'production'){
 		return [
 			'http://localhost:4200',
-			'http://localhost:4201'
+			'http://localhost:4201',
+			'https://kalaja-front-4yqv.vercel.app',
 		]
 	}
 	else {
