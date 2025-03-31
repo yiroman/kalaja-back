@@ -63,6 +63,7 @@ const dominiosPermitidos = () => {
 	else {
 		return [
 			'http://localhost:4200',
+			'https://kalaja-front-4yqv.vercel.app',
 			'http://localhost:4201'
 		]
 	}
