@@ -69,6 +69,7 @@ router.post('/login',
 
 router.get('/validar_sesion',
     middleware_token,
+    console.log( 'validar_sesion'),
     async (req, res) =>{
         return res.json({
             code: 200,
@@ -89,6 +90,7 @@ router.get('/obtenerUsuario',
     async (req, res) => {
         try{
             const token = req.session.token;
+            console.log('token en obtener usuario', token)
         if(token){
             const decoded = jwt.verify(token, process.env.JWT_KEY)
             const usuario = await UsuarioModel.findById(decoded.id)
@@ -106,7 +108,7 @@ router.get('/obtenerUsuario',
         crearError(res, 'NO_TOKEN')
 
         }catch(e){
-            
+            console.log('error' + e)
         }
     })
 
