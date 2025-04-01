@@ -49,6 +49,7 @@ const sess = {
 	}
 };
 if(app.get('env') ==='development'){
+	console.log('app en desarrollo')
 	sess.cookie.secure = false
 	sess.cookie.sameSite = 'Lax'
 }
