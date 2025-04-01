@@ -62,7 +62,7 @@ router.post('/login', inicio_sesion_validator, async (req, res) => {
 
         await UsuarioModel.updateOne({ _id: usuario._id }, { token });
 
-        req.session.token = token;
+        req.session.kalaja = token;
 
         // 🔐 Forzar guardado de la sesión antes de responder
         req.session.save(err => {
@@ -98,7 +98,7 @@ router.get('/validar_sesion',
 )
 
 router.get('/logout',async (req, res) => {
-    req.session.token = null;
+    req.session.kalaja = null;
     res.json({
         code: 200,
         message: "Sesion cerrada"
@@ -110,7 +110,11 @@ router.get('/obtenerUsuario',
         try{
             console.log('Cookie en obtenerUsuario:', req.headers.cookie);
             console.log('Token en sesión:', req.session.token);
-            const token = req.session.token;
+
+
+
+
+            const token = req.session.kalaja;
             console.log('token en obtener usuario', token)
         if(token){
             const decoded = jwt.verify(token, process.env.JWT_KEY)
@@ -138,7 +142,7 @@ router.get('/obtenerUsuario',
 router.get('/obtenerUsuarios',
     middleware_token,
     async (req, res) => {
-    const token = req.session.token;
+    const token = req.session.kalaja;
     if (token) {
         const decoded = jwt.verify(token, process.env.JWT_KEY);        
         let usuario
@@ -346,7 +350,7 @@ router.post('/verificarCorreo',
 router.get('/obtenerCorreos',
     middleware_token,
     async (req, res) => {
-        const token = req.session.token;
+        const token = req.session.kalaja;
         if (!token) {
             return res.status(404).json({
                 code: 404,

@@ -18,7 +18,7 @@ router.get('/', middleware_token, async (req, res) => {
 
 
 router.get('/menu', (req, res) => {
-    const token = req.session.token;
+    const token = req.session.kalaja;
     const decoded = jwt.verify(token, process.env.JWT_KEY);
     const tipoDependencia = decoded.tipo_dependencia;
 

@@ -39,7 +39,7 @@ var app = express();
 app.set('trust proxy', 1);
 // Configuración de la sesión
 const sess = {
-	name: 'session.sapmer',        // Nombre de la cookie
+	name: 'session.kalaja',        // Nombre de la cookie
 	secret: process.env.SECRET_COOKIE, // Debe ser una cadena segura y única
 	resave: false,           // No guarda la sesión si no hay cambios
 	saveUninitialized: false, // No guarda sesiones vacías

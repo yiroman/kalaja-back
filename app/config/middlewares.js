@@ -5,7 +5,7 @@ const {crearError} = require('../utils/errores')
 var app = express();
 const middleware_token = async (req, res, next) =>{
     try{
-        const token = req.session.token;
+        const token = req.session.kalaja;
         console.log('token', token)
         const usuario = await UsuarioModel.findOne({token: token, estatus: 'Habilitado'})
 
@@ -33,7 +33,7 @@ const middleware_token = async (req, res, next) =>{
 }
 
 const middleware_admin = async (req, res, next) => {
-    const token = req.session.token
+    const token = req.session.kalaja
         if(!token){
             crearError(res, 'No hay token')
             return
@@ -49,7 +49,7 @@ const middleware_admin = async (req, res, next) => {
 }
 
 const middleware_roles = (roles) => (req, res, next)  =>{
-    const token = req.session.token;
+    const token = req.session.kalaja;
     if(token){
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         const jwtRol = decoded.clave_rol
