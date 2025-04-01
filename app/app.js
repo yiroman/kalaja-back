@@ -48,7 +48,7 @@ const sess = {
 		maxAge: 60 * 60000 // Duración de la cookie (1 hora)
 	}
 };
-if(app.get('env') ==='dev'){
+if(app.get('env') ==='development'){
 	sess.cookie.secure = false
 	sess.cookie.sameSite = 'Lax'
 }

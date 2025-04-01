@@ -1,6 +1,6 @@
 FROM node:22-alpine3.19
 
-ENV NODE_ENV dev
+ENV NODE_ENV development
 
 COPY ["app/package.json", "app/package-lock.json", "/usr/src/"]
 
