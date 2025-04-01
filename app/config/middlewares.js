@@ -45,7 +45,7 @@ const middleware_token = async (req, res, next) =>{
     }catch(e){
         const error = {
             code: 404,
-            message: "Correo o contraseña incorrectos"
+            message: "Correo o contraseña incorrectos + " + e.message
         }
         res.status(404).json(error);
     }
