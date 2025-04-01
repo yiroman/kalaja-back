@@ -108,6 +108,8 @@ router.get('/logout',async (req, res) => {
 router.get('/obtenerUsuario',
     async (req, res) => {
         try{
+            console.log('Cookie en obtenerUsuario:', req.headers.cookie);
+            console.log('Token en sesión:', req.session.token);
             const token = req.session.token;
             console.log('token en obtener usuario', token)
         if(token){
