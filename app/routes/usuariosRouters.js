@@ -15,63 +15,77 @@ const { crearError } = require('../utils/errores');
 
 
 //Inicio de sesion
-router.post('/login', 
-    inicio_sesion_validator,
-    async (req, res) =>{   
-    const {body} = req //machea con el validator
-    const usuario =  await UsuarioModel.findOne({$and : [{correo: body.correo}, {contrasena: body.contrasena}]})
-        console.log(usuario)
-    if(usuario == null){
+router.post('/login', inicio_sesion_validator, async (req, res) => {
+    const { body } = req;
 
-        const error = {
-            code: 404,
-            message: "Correo o contraseña incorrectos"
+    try {
+        const usuario = await UsuarioModel.findOne({
+            $and: [
+                { correo: body.correo },
+                { contrasena: body.contrasena }
+            ]
+        });
+
+        console.log(usuario);
+
+        if (!usuario) {
+            return res.status(404).json({
+                code: 404,
+                message: "Correo o contraseña incorrectos"
+            });
         }
-        res.status(404).json(error);
-    }
 
-    if(usuario.clave_estatus != 1){
-        const error = {
-            code: 404,
-            message: "Usuario deshabilitado contacte con el adminsitrador"
+        if (usuario.clave_estatus !== 1) {
+            return res.status(404).json({
+                code: 404,
+                message: "Usuario deshabilitado, contacte con el administrador"
+            });
         }
-        res.status(404).json(error);
-    }
 
-    const fechaFin = new Date();
-    
-    const datosToken = {
-        fechaFin : fechaFin.getTime(),
-        id: usuario._id,
-        nombre_rol: usuario.nombre_rol,
-        clave_rol: usuario.clave_rol,
-        correo: usuario.correo,
-        nombre_completo: `${usuario.nombre} ${usuario.ap_paterno} ${usuario.ap_materno}`
-    };
+        const fechaFin = new Date();
 
-    winston.log({
-        level: 'info',
-        message: `${req.ip} - [${new Date().toString().replace(" (Central Standard Time)", "")}] - ${req.headers['user-agent']} - ${datosToken.nombre_completo} - ${datosToken.correo} - Entrando a sistema`
-    });
+        const datosToken = {
+            fechaFin: fechaFin.getTime(),
+            id: usuario._id,
+            nombre_rol: usuario.nombre_rol,
+            clave_rol: usuario.clave_rol,
+            correo: usuario.correo,
+            nombre_completo: `${usuario.nombre} ${usuario.ap_paterno} ${usuario.ap_materno}`
+        };
 
-    const token = jwt.sign(datosToken, process.env.JWT_KEY);
+        winston.log({
+            level: 'info',
+            message: `${req.ip} - [${new Date().toString().replace(" (Central Standard Time)", "")}] - ${req.headers['user-agent']} - ${datosToken.nombre_completo} - ${datosToken.correo} - Entrando a sistema`
+        });
 
-        console.log(token)
-    if(UsuarioModel.updateOne({_id: usuario._id},{token: token})){ //si se actualiza el usuario...
-        req.session.token = token
+        const token = jwt.sign(datosToken, process.env.JWT_KEY);
+
+        await UsuarioModel.updateOne({ _id: usuario._id }, { token });
+
         req.session.token = token;
-        req.session.save((err) => {
+
+        // 🔐 Forzar guardado de la sesión antes de responder
+        req.session.save(err => {
             if (err) {
                 console.error('❌ Error al guardar sesión:', err);
                 return res.status(500).json({ message: 'Error al guardar sesión' });
             }
+
             return res.status(200).json({
                 code: 200,
                 message: "Inicio de sesión correcto"
             });
         });
+
+    } catch (error) {
+        console.error('❌ Error inesperado en login:', error);
+        return res.status(500).json({
+            code: 500,
+            message: 'Error en el servidor'
+        });
     }
-})
+});
+
 
 router.get('/validar_sesion',
     middleware_token,
