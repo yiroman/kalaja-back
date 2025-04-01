@@ -59,11 +59,17 @@ router.post('/login',
         console.log(token)
     if(UsuarioModel.updateOne({_id: usuario._id},{token: token})){ //si se actualiza el usuario...
         req.session.token = token
-        const error = {
-            code: 200,
-            message: "Inicio de sesion correcto"
-        }
-        res.status(200).json(error);
+        req.session.token = token;
+        req.session.save((err) => {
+            if (err) {
+                console.error('❌ Error al guardar sesión:', err);
+                return res.status(500).json({ message: 'Error al guardar sesión' });
+            }
+            return res.status(200).json({
+                code: 200,
+                message: "Inicio de sesión correcto"
+            });
+        });
     }
 })
 
