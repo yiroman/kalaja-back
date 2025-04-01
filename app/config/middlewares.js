@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken'),
     UsuarioModel = require('../models/UsuarioModel');
 const {crearError} = require('../utils/errores')
-
+var app = express();
 const middleware_token = async (req, res, next) =>{
     try{
         const token = req.session.token;
