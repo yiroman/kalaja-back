@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken'),
+    express = require('express'),
     UsuarioModel = require('../models/UsuarioModel');
 const {crearError} = require('../utils/errores')
 var app = express();
