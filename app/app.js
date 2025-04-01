@@ -54,22 +54,27 @@ if(app.get('env') ==='dev'){
 }
 const dominiosPermitidos = () => {
 	if(app.get('env') === 'production'){
+		console.log('app en produccion')
 		return [
 			'http://localhost:4200',
 			'http://localhost:4201',
+			'kalaja-front-git-main-yiromans-projects.vercel.app',
+			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
 			'https://kalaja-front-4yqv.vercel.app',
 		]
 	}
 	else {
+		console.log('app en desarrollo')
 		return [
 			'http://localhost:4200',
 			'https://kalaja-front-4yqv.vercel.app',
-			'kalaja-front-git-main-yiromans-projects.vercel.app',
 			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
 			'http://localhost:4201'
 		]
 	}
 }
+console.log('ENV ACTUAL:', app.get('env'))  // <-- esto te dirá si estás realmente en producción
+
 const dominios = dominiosPermitidos()
 console.log('dominios',dominios)
 
