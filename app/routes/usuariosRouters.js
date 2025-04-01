@@ -69,7 +69,6 @@ router.post('/login',
 
 router.get('/validar_sesion',
     middleware_token,
-    console.log( 'validar_sesion'),
     async (req, res) =>{
         return res.json({
             code: 200,
