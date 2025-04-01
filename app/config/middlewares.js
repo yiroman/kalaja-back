@@ -5,7 +5,18 @@ const {crearError} = require('../utils/errores')
 const middleware_token = async (req, res, next) =>{
     try{
         const token = req.session.token;
-
+        console.log('token', token)
+        if(app.get('env') ==='dev'){
+            if(!token){
+                crearError(res, 'No hay token en desarrollo')
+                return
+            }
+        }else{
+            if(!token){
+                crearError(res, 'No hay token en produccion')
+                return
+            }
+        }
         if(token == null){
             const error = {
                 code: 401,
