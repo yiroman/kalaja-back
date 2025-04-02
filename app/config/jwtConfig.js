@@ -22,7 +22,7 @@ const crearTokenCookie = (req, res, usuario) => {
         } 
     );
 
-    req.session.kalaja = token
+    req.session.kalaja = {token}
 
     return res; 
 };
