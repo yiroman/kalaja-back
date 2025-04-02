@@ -98,11 +98,12 @@ router.get('/obtener_informacion_usuario',
         try {
             console.log('session.kalaja:', req.session?.kalaja);
 
-            // Mientras pruebas sin el middlewareToken
             const token = req.session?.kalaja?.token;
-
             if (!token) {
-                return respuestaHTTP(res, 401, 'Token no encontrado en sesión');
+                if (!res.headersSent) {
+                    return respuestaHTTP(res, 401, 'Token no encontrado en sesión');
+                }
+                return;
             }
 
             const decoded = jwt.verify(token, process.env.JWT_KEY);
@@ -115,13 +116,20 @@ router.get('/obtener_informacion_usuario',
                 auth: true
             };
 
-            return respuestaHTTP(res, 200, 'Información del usuario encontrada', usuarioData);
+            if (!res.headersSent) {
+                return respuestaHTTP(res, 200, 'Información del usuario encontrada', usuarioData);
+            }
+
         } catch (e) {
             console.error('❌ Error al obtener usuario:', e);
-            return respuestaHTTP(res, 400, `Error al obtener usuario: ${e}`);
+
+            if (!res.headersSent) {
+                return respuestaHTTP(res, 400, `Error al obtener usuario: ${e}`);
+            }
         }
     }
 );
+
 
 
 
