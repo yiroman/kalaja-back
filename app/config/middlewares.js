@@ -6,7 +6,7 @@ const log = require('../generales/log');
 const middlewareToken = async (req, res, next) =>{
     try{
         const  token  = req.session.kalaja;
-        console.log(`Token: ${token}`)
+        console.log(req.session)
         if(token == null){
             respuestaHTTP(res, 401, "No existe el token")
             return
