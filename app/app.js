@@ -56,7 +56,7 @@ const sess = {
 };
 if(app.get('env') ==='dev'){
 	sess.cookie.secure = false
-	sess.cookie.sameSite = 'Lax'
+	sess.cookie.sameSite = 'None'
 }
 
 const dominiosPermitidos = () => {
