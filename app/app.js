@@ -50,7 +50,7 @@ const sess = {
 	resave: false,           // No guarda la sesión si no hay cambios
 	saveUninitialized: false, // No guarda sesiones vacías
 	cookie: {
-		httpOnly: true,     // Solo accesible desde el servidorD
+		httpOnly: false,     // Solo accesible desde el servidorD
 		maxAge: 4 * (60 * 60000) // 4 horas en milisegundos
 	}
 };
