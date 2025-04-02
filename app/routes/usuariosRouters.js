@@ -13,6 +13,10 @@ const { crearTokenCookie } = require('../config/jwtConfig');
 const { connectRedis } = require('../config/redis');
 const { SUPERADMINISTRADOR, ADMINISTRADOR } = require('../config/roles');
 
+router.get('/debug_sesion', (req, res) => {
+    console.log('Contenido actual de sesión:', req.session);
+    respuestaHTTP(res, 200, "Sesión actual", req.session);
+});
 
 //Inicio de sesion
 router.post('/login', 
