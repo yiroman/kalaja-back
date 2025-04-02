@@ -18,7 +18,7 @@ const crearTokenCookie = (req, res, usuario) => {
         process.env.JWT_KEY,
         {   
             expiresIn: '4h',
-            issuer: 'kalaja-api'
+            // issuer: 'kalaja-api'
         } 
     );
 
@@ -31,7 +31,7 @@ const obtenerDatosUsuario = (token) => {
     return jwt.verify(token, process.env.JWT_KEY,
         {
             expiresIn: "4h",
-            issuer: 'kalaja-api'
+            // issuer: 'kalaja-api'
         }
     )
 }
@@ -47,7 +47,7 @@ const verificarToken = async (res, token) => {
         return jwt.verify(token, process.env.JWT_KEY,
             {
                 expiresIn: "4h",
-                issuer: 'kalaja-api'
+                // issuer: 'kalaja-api'
             }
         )
 

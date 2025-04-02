@@ -15,7 +15,7 @@ const middlewareToken = async (req, res, next) =>{
         const decoded = jwt.verify(token, process.env.JWT_KEY,
                     {
                         expiresIn: "4h",
-                        issuer: process.env.EMISOR_JWT    
+                        // issuer: process.env.EMISOR_JWT
                     }
         )
 
