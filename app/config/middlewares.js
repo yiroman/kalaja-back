@@ -22,7 +22,7 @@ const middlewareToken = async (req, res, next) =>{
 
         next()
     }catch(e){
-        respuestaHTTP(res, 401, `Acceso no autorizado` + e + " ",  req.session.cookie )
+        respuestaHTTP(res, 401, `Acceso no autorizado` + e + " ",  req.session.kalaja )
     }
 }
 
