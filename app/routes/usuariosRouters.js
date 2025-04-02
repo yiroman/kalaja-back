@@ -91,7 +91,7 @@ router.get('/obtener_informacion_usuario',
     middlewareToken,
     async (req, res) => {
         try{
-            console.log('token' + req.token)
+            console.log('token' + req.session.kalaja)
             const token = req.token
             const usuario = await UsuarioModel.findById(token.id)
 
