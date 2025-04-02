@@ -1,29 +1,25 @@
 var express = require('express');
-var router = express.Router()
-const jwt = require('jsonwebtoken');
+const router = express.Router()
 const RolModel = require('../models/RolModel');
-const {errorAd} = require('../utils/errores');
-const { middleware_admin, middleware_token } = require('../config/middlewares');
-const log = require('../generales/log');
+const { middlewareToken } = require('../config/middlewares');
+const { respuestaHTTP } = require('../utils/errores');
 
 
-router.get('/', middleware_token, async (req, res) => {
-    try{
-        const roles = await RolModel.find({})
-        res.json(roles)
-    }catch(e){
-        errorAd(res, 'ERROR_DEPENDENCIA')
-    }
-})
+// router.get('/', middlewareToken, async (req, res) => {
+//     try{
+//         const roles = await RolModel.find({})
+//         res.json(roles)
+//     }catch(e){
+//         respuestaHTTP(res, 400, "Error al obtener los roles", e)
+//     }
+// })
 
 
-router.get('/menu', (req, res) => {
-    const token = req.session.kalaja;
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-    const tipoDependencia = decoded.tipo_dependencia;
+router.get('/menu',middlewareToken, (req, res) => {
+    const token = req.token;
 
     let menu;
-    switch (decoded.clave_rol) {
+    switch (token.clave_rol) {
         // Superadministrador
         case 27:
             menu = [
@@ -67,10 +63,10 @@ router.get('/menu', (req, res) => {
                     displayName: 'Usuarios',
                     iconName: 'user',
                     route: '/usuarios',
-                },
+                }
             ];
             break;
-        // Operador
+        // Organizador
         case 48:
             menu = [
                 {
@@ -80,17 +76,7 @@ router.get('/menu', (req, res) => {
                     displayName: 'Inicio',
                     iconName: 'home',
                     route: '/starter',
-                },
-                {
-                    displayName: 'Trámites / Servicios',
-                    iconName: 'file',
-                    route: '/tramites',
-                },
-                {
-                    displayName: 'Excepciones',
-                    iconName: 'file',
-                    route: '/ver_excepciones',
-                },
+                }
                
             ];
             break;
@@ -106,7 +92,6 @@ router.get('/menu', (req, res) => {
                     route: '/starter',
                 }
             ]
-
              
             break;
     }

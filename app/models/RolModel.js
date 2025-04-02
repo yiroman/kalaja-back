@@ -7,6 +7,6 @@ const RolSchema = mongoose.Schema({
     nombre_rol: { type: String,
         enum: []
      }
-});
+}, { timestamps: true });
 
 module.exports = RolModel =  mongoose.model('roles', RolSchema);

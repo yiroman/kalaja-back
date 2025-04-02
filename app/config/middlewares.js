@@ -1,55 +1,50 @@
 const jwt = require('jsonwebtoken'),
-    express = require('express'),
     UsuarioModel = require('../models/UsuarioModel');
-const {crearError} = require('../utils/errores')
-var app = express();
-const middleware_token = async (req, res, next) =>{
-    try{
-        const token = req.session.kalaja;
-        console.log('token', token)
-        const usuario = await UsuarioModel.findOne({token: token, estatus: 'Habilitado'})
+const {respuestaHTTP} = require('../utils/errores');
+const log = require('../generales/log');
 
-        if(usuario != null){
-            const decoded = jwt.verify(token, process.env.JWT_KEY)
-            const fechaFin = new Date(decoded.fechaFin);
-            const fechaActual = new Date();
-            if (fechaActual.getTime() >= fechaFin.getTime()){
-                const error = {
-                    code: 401,
-                    message: "Token has been expired"
-                }
-                res.status(404).json(error);
-            }
+const middlewareToken = async (req, res, next) =>{
+    try{
+        const { token } = req.session.kalaja;
+        if(token == null){
+            respuestaHTTP(res, 401, "No existe el token")
+            return
         }
         
+        const decoded = jwt.verify(token, process.env.JWT_KEY,
+                    {
+                        expiresIn: "4h",
+                        issuer: process.env.EMISOR_JWT    
+                    }
+        )
+
+        req.token = decoded
+
         next()
     }catch(e){
-        const error = {
-            code: 404,
-            message: "Correo o contraseña incorrectos + " + e.message
-        }
-        res.status(404).json(error);
+        respuestaHTTP(res, 401, `Acceso no autorizado`)
     }
 }
 
-const middleware_admin = async (req, res, next) => {
-    const token = req.session.kalaja
-        if(!token){
-            crearError(res, 'No hay token')
-            return
+const middlewareEstatusUsuario = async(req, res, next) =>{
+    try{
+        const {token} = req.session.kalaja
+
+        console.log(token)
+
+        const usuario = await UsuarioModel.findOne({_id: token.id}, {estatus: 'Habilitado'})
+        if(usuario == null){
+            respuestaHTTP(res, 200, "Usuario Inhabilitado")
         }
-        const decoded = jtw.verify(token, process.env.JWT_KEY)
-        const fechaFin = new Date(decoded.fechaFin);
-        const fechaActual = new Date();
-        const rol = decoded.rol.clave;
-        if(( fechaActual.getTime() >= fechaFin.getTime() ) &&(rol!=27 && rol != 35)){
-            crearError(res, 'ROL_AUTH_INVALID')
-        }
-        next()
+
+    }catch(e){
+        respuestaHTTP(res, 401, `No autorizado ${e}`)
+    }
 }
 
-const middleware_roles = (roles) => (req, res, next)  =>{
-    const token = req.session.kalaja;
+
+const middlewareRoles = (roles) => (req, res, next)  =>{
+    const { token } = req.session.kalaja
     if(token){
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         const jwtRol = decoded.clave_rol
@@ -57,13 +52,14 @@ const middleware_roles = (roles) => (req, res, next)  =>{
         if(roles.includes(jwtRol)){
             next()
         }else{
-            crearError(res, 203)
+            respuestaHTTP(res, 203, "Este rol no esta autorizado")
         }
     }else{
-        crearError(res, 204)
+        respuestaHTTP(res, 204, "No existe el token con el que se quiere ingresar")
     }
 }
 
 
-module.exports = {middleware_roles, middleware_token, middleware_admin};
+
+module.exports = {middlewareEstatusUsuario, middlewareRoles, middlewareToken};
 

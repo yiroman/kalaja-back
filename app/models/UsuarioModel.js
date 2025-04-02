@@ -17,18 +17,14 @@ const UsuariosSchema = mongoose.Schema({
     ap_paterno: { type: String, required: true },
     ap_materno: { type: String, required: true },
 
+    curp: { type: String, required: true },
 
+    clave_dependencia: { type: Number, required: true },
 
-    telefono: { type: String, required: true },
-   
     clave_rol: { 
         type: Number, required: true,
-        enum: [27, 35, 53, 48]},
-        
-    nombre_rol: { 
-        type: String,
-        enum: ["Superadministrador", "Administrador", "ROM", "Operador"],
-        required: true} 
+        enum: [35, 74, 48]
+    },
 },{
     timestamps: true
 });

@@ -1,7 +1,8 @@
-use("kalaja");
+use("kalaja_db");
 
 db.roles.insertMany([
     { clave_rol: 27, nombre_rol: "Superadministrador" },
     { clave_rol: 35, nombre_rol: "Administrador" },
-    { clave_rol: 48, nombre_rol: "Operador" },
+    { clave_rol: 48, nombre_rol: "Organizador" },
+    { clave_rol: 74, nombre_rol: "Staff" },
 ]);

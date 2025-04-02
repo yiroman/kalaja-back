@@ -1,4 +1,4 @@
-use("kalaja");
+use("kalaja_db");
 
 db.usuarios.insertMany([
     {
@@ -9,9 +9,13 @@ db.usuarios.insertMany([
         "correo": "superadmin@kalaja.com",
         "contrasena": "1ca1af9fd5198cc7e9e8da6dfa784cef08bb2cbe4b878117112f3c7829e47f79",
         "nombre": "Super",
-        "ap_paterno": "Dashboard",
-        "ap_materno": "Bknd",
+        "ap_paterno": "admin",
+        "ap_materno": "kalaja",
         "cargo": "",
+        "curp": "EEOS250219HTLVMPA1",
+        "id_dependencia": "",
+        "clave_dependencia":  2931,
+        "nombre_dependencia": "Oficialía Mayor de Gobierno",
         "telefono": "7894561325",
         "id_rol": "", 
         "clave_rol": 27, 
@@ -22,12 +26,16 @@ db.usuarios.insertMany([
         "clave_estatus": "1",
         "nombre_estatus": "Habilitado",
         "justificacion_estatus": "",
-        "correo": "admin@dashboard.com",
+        "correo": "admin@kalaja.com",
         "contrasena": "1ca1af9fd5198cc7e9e8da6dfa784cef08bb2cbe4b878117112f3c7829e47f79",
         "nombre": "Admin",
-        "ap_paterno": "Dashboard",
-        "ap_materno": "Bknd",
+        "ap_paterno": "omg",
+        "ap_materno": "gob",
+        "curp": "EEOA250219HTLVMDA5",
         "cargo": "",
+        "id_dependencia": "",
+        "clave_dependencia":  2931,
+        "nombre_dependencia": "Oficialía Mayor de Gobierno",
         "telefono": "7894561325",
         "id_rol": "", 
         "clave_rol": 35, 

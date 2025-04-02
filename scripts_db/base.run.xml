@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="base" type="DatabaseScript">
+    <script-file value="$PROJECT_DIR$/scripts_db/usuario.mongodb" />
+    <script-file value="$PROJECT_DIR$/scripts_db/usuario_estatuses.mongodb" />
+    <script-file value="$PROJECT_DIR$/scripts_db/roles.mongodb" />
+    <script-file value="$PROJECT_DIR$/scripts_db/dependencias.mongodb" />
+    <script-mode>FILE</script-mode>
+    <data-source id="ebec024f-43b4-4d67-b80a-9c10e1124f40" />
+    <method v="2" />
+  </configuration>
+</component>

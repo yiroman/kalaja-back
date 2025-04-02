@@ -1,12 +1,12 @@
 var express = require('express');
 
 const DependenciaModel = require('../models/DependenciasModel');
-const { middleware_token } = require('../config/middlewares');
+const { middlewareToken } = require('../config/middlewares');
 const { errorAd } = require('../utils/errores');
 
 var router = express.Router();
 
-router.get('/', middleware_token, async (req, res) => {
+router.get('/', async (req, res) => {
         try{
             const dependencias = await DependenciaModel.find({})
             res.json(dependencias)
@@ -15,7 +15,7 @@ router.get('/', middleware_token, async (req, res) => {
         }
 });
 
-router.get('/:clave', middleware_token, async (req, res) => {
+router.get('/:clave', middlewareToken, async (req, res) => {
     try {
         const claveDependencia = parseInt(req.params.clave, 10); // Asegúrate de convertir la clave a número
         const dependencia = await DependenciaModel.findOne({ clave_dependencia: claveDependencia });

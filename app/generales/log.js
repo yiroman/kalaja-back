@@ -1,8 +1,9 @@
 const winston = require("../config/winston"),
     logdb = require('../generales/logdb')
     jwt = require("jsonwebtoken");
+
 const log = (req, level, accion, tipo = "") => {
-    const token = req.get('Authorization')?.replace(/^Bearer\s+/, "");
+    const { token } = req.session.eventos;
     if(token) {
         const decoded = jwt.verify(token, process.env.JWT_KEY);
         winston.log({

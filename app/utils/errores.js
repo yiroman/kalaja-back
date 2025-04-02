@@ -1,4 +1,4 @@
-const crearError = (res,  codigo) => {
+const respuestaHTTP = (res, codigo, mensaje, data = null) => {
     const erroresHttp = {
         100: "Continúa",
         101: "Protocolos de conmutación",
@@ -60,10 +60,13 @@ const crearError = (res,  codigo) => {
         508: "Bucle detectado",
         511: "Autenticación de red necesaria"
     };
-    
-    let mensaje = erroresHttp[codigo] || 'ese error no lo conoce ni dios'
 
-    
-    res.send({error: mensaje}) 
+    res.status(codigo).json({
+        success: codigo >= 200 && codigo < 300, // True si es 2xx
+        code: codigo,
+        message: mensaje,
+        data
+    }); 
 }
-module.exports = {crearError}
+
+module.exports = {respuestaHTTP}

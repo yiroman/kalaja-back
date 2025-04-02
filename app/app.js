@@ -4,7 +4,8 @@ var createError = require('http-errors'),
 	helmet = require('helmet'),
 	morgan = require('morgan'),
 	winston = require('./config/winston'),
-	session = require('express-session');
+	session = require('express-session'),
+	{redisClient} = require('./config/redis')
 
 //MongoDB
 const mongoose = require('mongoose');
@@ -19,70 +20,63 @@ morgan.token('date', function() {
 	return new Date().toString().replace(" (Central Standard Time)", "");
 });
 
-const indexRouter = require('./routes/index');
-const usuariosRouter = require('./routes/usuariosRouters');
+const indexRouter = require('./routes/index')
+const usuariosRouter = require('./routes/usuariosRouters')
+const datosEstaticos = require('./routes/datosEstaticosRouters')
 const rolesRouter = require('./routes/rolesRouters')
 const dependenciasRouter = require('./routes/dependenciasRouters')
-const cacheRouter = require('./routes/cacheServicesRouters')
 const pedidosRouter = require('./routes/pedidosRouters')
 const productosRouter = require('./routes/productosRouters')
-// const observaciones = require('./routes/observacionesRouters')
-// const tramites = require('./routes/tramitesRouters')
-// const periodos = require('./routes/periodosRouters')
-// const pdf = require('./routes/pdfRouters')
-// const ceroPapel = require('./routes/ceropapelRouters')
-// const tramitePublico = require('./routes/tramitePublicoRouters')
-// const comentarios = require('./routes/comentariosRouters')
-// const omisionesTramite = require('./routes/omisionesRouters')
 
 var app = express();
 app.set('trust proxy', 1);
 // Configuración de la sesión
+
+
+// Conectar a Redis
+redisClient.connect().catch(console.error);
+const {RedisStore} = require("connect-redis")
+let store_redis = new RedisStore({
+    client: redisClient, 
+    prefix: 'session-cookie:',
+	ttl: 4 * (60 * 60000) // 4 horas en milisegundos
+
+});
+//Configuración de Cookie de session
 const sess = {
+	store: store_redis,
 	name: 'session.kalaja',        // Nombre de la cookie
 	secret: process.env.SECRET_COOKIE, // Debe ser una cadena segura y única
 	resave: false,           // No guarda la sesión si no hay cambios
 	saveUninitialized: false, // No guarda sesiones vacías
 	cookie: {
-		httpOnly: true,     // Solo accesible desde el servidor
-		maxAge: 60 * 60000 // Duración de la cookie (1 hora)
+		httpOnly: true,     // Solo accesible desde el servidorD
+		maxAge: 4 * (60 * 60000) // 4 horas en milisegundos
 	}
 };
-if(app.get('env') ==='development'){
-	console.log('app en desarrollo')
+if(app.get('env') ==='dev'){
 	sess.cookie.secure = false
 	sess.cookie.sameSite = 'Lax'
 }
+
 const dominiosPermitidos = () => {
 	if(app.get('env') === 'production'){
-		console.log('app en produccion')
 		return [
-			'http://localhost:4200',
-			'http://localhost:4201',
-			'kalaja-front-git-main-yiromans-projects.vercel.app',
-			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
-			'https://kalaja-front-4yqv.vercel.app',
+			'https://eventos.tlaxcala.gob.mx',
+			'https://eventos-admin.tlaxcala.gob.mx'
 		]
 	}
 	else {
-		console.log('app en desarrollo')
 		return [
 			'http://localhost:4200',
-			'https://kalaja-front-4yqv.vercel.app',
-			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
 			'http://localhost:4201'
 		]
 	}
 }
-console.log('ENV ACTUAL:', app.get('env'))  // <-- esto te dirá si estás realmente en producción
-
 const dominios = dominiosPermitidos()
-console.log('dominios',dominios)
 
 const corsOptions = (req, callback) => {
 	const origin = req.header('Origin')
-	console.log(origin)
-	console.log('dominio encontrado',dominios.includes(origin))
 	if(dominios.includes(origin)){
 		callback(null, {origin: true, credentials:true})
 	}
@@ -112,24 +106,15 @@ app.use(express.static('uploads'));
 app.use('/', indexRouter);
 
 const prefixInterna = `/api/v1/`
+const prefixExterna = `/api/v2/`;
+
 app.use(`${prefixInterna}index`, indexRouter)
 app.use(`${prefixInterna}usuarios`, usuariosRouter)
+app.use(`${prefixInterna}datos_estaticos`, datosEstaticos)
 app.use(`${prefixInterna}roles`, rolesRouter)
 app.use(`${prefixInterna}dependencias`, dependenciasRouter)
-app.use(`${prefixInterna}cache`, cacheRouter)
 app.use(`${prefixInterna}pedidos`, pedidosRouter)
 app.use(`${prefixInterna}productos`, productosRouter)
-// app.use(`${prefixInterna}observaciones`, observaciones)
-// app.use(`${prefixInterna}tramites`, tramites)
-// app.use(`${prefixInterna}periodos`, periodos)
-// app.use(`${prefixInterna}pdf`, pdf)
-// app.use(`${prefixInterna}cero_papel`, ceroPapel)
-// app.use(`${prefixInterna}comentarios`, comentarios)
-// app.use(`${prefixInterna}omisiones`, omisionesTramite)
-
-
-
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -155,6 +140,6 @@ app.use(function (err, req, res, _) {
 	};
 	res.json(json);
 });
-
 module.exports = app;
+
 

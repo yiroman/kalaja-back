@@ -1,27 +1,58 @@
+name: "kalaja"
 services:
-  app-dashboard:
-    container_name: node-express-dashboard
+  app-kalaja:
+    container_name: node-express-kalaja
     build:
       context: .
       dockerfile: dev.Dockerfile
     restart: always
     environment:
+      EMISOR_JWT: "kalaja-api"
+      MONGO_URL: "mongodb://kalaja_user:TBQNXOCYmeQ_84bmPTl4n9@db-kalaja/kalaja_db?authSource=admin&readPreference=primary&ssl=false&directConnection=true"
       JWT_KEY: "ia*DKhj.g9@ho¡y729i-_¿!n3YjDhsL&3xVhGo"
+      SECRET_COOKIE: "SADHUIH1sdf32423sasd4&%$#01E@IOUQSDNKL"
     depends_on:
-      - db-dashboard
+      - db-kalaja
+      - redis-kalaja
     volumes:
       - ./app/logs:/usr/src/logs
+      - ./app/:/usr/src
       - /usr/src/node_modules
     ports:
-      - "9004:3000"
+      - "3020:3000"
+    networks:
+      - kalaja-network
 
-  db-dashboard:
-    container_name: mongodb-gestor-dashboard
+  redis-kalaja:
+    container_name: redis-kalaja
+    image: redis:7.2
     restart: always
-    image: mongo:8.0.0-rc9
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=omg_dashboard_user
-      - MONGO_INITDB_ROOT_PASSWORD=TBQNXOCYmeQ_84bmPTl4n9
-      - MONGO_INITDB_DATABASE=omg_dashboard
+    ports:
+      - "6379:6379"
     volumes:
-      - ./mongodashboard:/data/db
+      - redis-kalaja:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+    networks:
+      - kalaja-network
+
+  db-kalaja:
+    container_name: mongodb-kalaja
+    image: mongo:8.0.0-rc9
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=kalaja_user
+      - MONGO_INITDB_ROOT_PASSWORD=TBQNXOCYmeQ_84bmPTl4n9
+      - MONGO_INITDB_DATABASE=kalaja_db
+    volumes:
+      - mongodb-kalaja:/data/db
+    networks:
+      - kalaja-network
+
+networks:
+  kalaja-network:
+
+volumes:
+  mongodb-kalaja:
+  redis-kalaja:

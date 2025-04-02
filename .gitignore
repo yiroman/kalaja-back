@@ -104,7 +104,8 @@ dist
 .tern-port
 
 #Archivos de MongoDB
-mongodashboard/*
+mongoeventos/*
+rediseventos/*
 
 #Archivos subidos al servidor
 uploads/*

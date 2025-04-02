@@ -1,4 +1,4 @@
-use("kalaja");
+use("kalaja_db");
 
 db.usuario_estatuses.insertMany([
     { 
