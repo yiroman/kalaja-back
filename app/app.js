@@ -50,13 +50,13 @@ const sess = {
 	resave: false,           // No guarda la sesión si no hay cambios
 	saveUninitialized: false, // No guarda sesiones vacías
 	cookie: {
-		httpOnly: false,     // Solo accesible desde el servidorD
+		httpOnly: true,     // Solo accesible desde el servidorD
 		maxAge: 4 * (60 * 60000) // 4 horas en milisegundos
 	}
 };
 if(app.get('env') ==='dev'){
 	sess.cookie.secure = false
-	sess.cookie.sameSite = 'None'
+	sess.cookie.sameSite = 'Lax'
 }
 
 const dominiosPermitidos = () => {
