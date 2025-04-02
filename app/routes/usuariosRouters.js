@@ -94,7 +94,7 @@ router.get('/logout', middlewareToken, async (req, res) => {
 })
 
 router.get('/obtener_informacion_usuario',
-    middlewareToken,
+    // middlewareToken,
     async (req, res) => {
         try{
             console.log('token' + req.session.kalaja)
