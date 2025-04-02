@@ -94,43 +94,25 @@ router.get('/logout', middlewareToken, async (req, res) => {
 })
 
 router.get('/obtener_informacion_usuario',
+    // middlewareToken,
     async (req, res) => {
-        try {
-            console.log('session.kalaja:', req.session?.kalaja);
+        try{
+            console.log('token' , req)
+            const token = req.token
+            const usuario = await UsuarioModel.findById(token.id)
 
-            const token = req.session?.kalaja?.token;
-            if (!token) {
-                if (!res.headersSent) {
-                    return respuestaHTTP(res, 401, 'Token no encontrado en sesión');
+                usuarioData = {
+                    nombre_completo: `${usuario.nombre} ${usuario.ap_paterno} ${usuario.ap_materno}`,
+                    clave_rol: usuario.clave_rol,
+                    clave_dependencia: usuario.clave_dependencia,
+                    auth: true
                 }
-                return;
-            }
 
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            const usuario = await UsuarioModel.findById(decoded.id);
-
-            const usuarioData = {
-                nombre_completo: `${usuario.nombre} ${usuario.ap_paterno} ${usuario.ap_materno}`,
-                clave_rol: usuario.clave_rol,
-                clave_dependencia: usuario.clave_dependencia,
-                auth: true
-            };
-
-            if (!res.headersSent) {
-                return respuestaHTTP(res, 200, 'Información del usuario encontrada', usuarioData);
-            }
-
-        } catch (e) {
-            console.error('❌ Error al obtener usuario:', e);
-
-            if (!res.headersSent) {
-                return respuestaHTTP(res, 400, `Error al obtener usuario: ${e}`);
-            }
+            respuestaHTTP(res, 200, "Informacion del usuario encontrada", usuarioData)
+        }catch(e){
+            respuestaHTTP(res, 400, `Error al obtener usuario: ${e}`)
         }
-    }
-);
-
-
+    })
 
 
 //Obtener usuarios
