@@ -29,8 +29,10 @@ router.post('/login',
     if(usuario.clave_estatus != 1){
         return respuestaHTTP(res, 401, "El usuario esta deshabilitado, por favor, comunicate con el administrador" )
     }
-    
-    crearTokenCookie(req, res, usuario)
+
+        await crearTokenCookie(req, res, usuario);
+
+        respuestaHTTP(res, 200, "Inicio de sesión correcto");
     
     winston.log({
         level: 'info',
