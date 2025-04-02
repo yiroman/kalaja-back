@@ -61,14 +61,21 @@ if(app.get('env') ==='dev'){
 
 const dominiosPermitidos = () => {
 	if(app.get('env') === 'production'){
+		console.log('app en produccion')
 		return [
-			'https://eventos.tlaxcala.gob.mx',
-			'https://eventos-admin.tlaxcala.gob.mx'
+			'http://localhost:4200',
+			'http://localhost:4201',
+			'kalaja-front-git-main-yiromans-projects.vercel.app',
+			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
+			'https://kalaja-front-4yqv.vercel.app',
 		]
 	}
 	else {
+		console.log('app en desarrollo')
 		return [
 			'http://localhost:4200',
+			'https://kalaja-front-4yqv.vercel.app',
+			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
 			'http://localhost:4201'
 		]
 	}
