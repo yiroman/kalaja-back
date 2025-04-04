@@ -54,7 +54,7 @@ const sess = {
 		maxAge: 4 * (60 * 60000) // 4 horas en milisegundos
 	}
 };
-if(app.get('env') ==='dev'){
+if(app.get('env') ==='development'){
 	sess.cookie.secure = true
 	sess.cookie.sameSite = 'none'
 }
