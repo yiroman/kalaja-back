@@ -55,7 +55,7 @@ const sess = {
 	}
 };
 if(app.get('env') ==='dev'){
-	sess.cookie.secure = false
+	sess.cookie.secure = true
 	sess.cookie.sameSite = 'none'
 }
 
@@ -74,6 +74,7 @@ const dominiosPermitidos = () => {
 		console.log('app en desarrollo')
 		return [
 			'http://localhost:4200',
+			'https://kalaja-front-4yqv.vercel.app',
 			'https://kalaja-front-4yqv.vercel.app',
 			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
 			'http://localhost:4201'
