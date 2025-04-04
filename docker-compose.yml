@@ -7,7 +7,6 @@ services:
       dockerfile: dev.Dockerfile
     restart: always
     environment:
-      NODE_ENV: production
       EMISOR_JWT: "kalaja-api"
       MONGO_URL: "mongodb://kalaja_user:TBQNXOCYmeQ_84bmPTl4n9@db-kalaja/kalaja_db?authSource=admin&readPreference=primary&ssl=false&directConnection=true"
       JWT_KEY: "ia*DKhj.g9@ho¡y729i-_¿!n3YjDhsL&3xVhGo"
