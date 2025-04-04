@@ -57,9 +57,6 @@ router.post('/login',
 
     new BitacoraOperadoresModel(datosBitacora).save(); //Se guarda en la bitacora los datos necesarios
 
-    if(UsuarioModel.updateOne({_id: usuario._id})){ //si se actualiza el usuario...
-        respuestaHTTP(res, 200, "Inicio de sesión correcto")
-    }
 })
 
 router.get('/validar_sesion',
