@@ -77,7 +77,8 @@ const dominiosPermitidos = () => {
 			'https://kalaja-front-4yqv.vercel.app',
 			'https://kalaja-front-4yqv.vercel.app',
 			'https://kalaja-front-git-main-yiromans-projects.vercel.app',
-			'http://localhost:4201'
+			'http://localhost:4201',
+			'https://kalaja-front.vercel.app/authentication/login'
 		]
 	}
 }
