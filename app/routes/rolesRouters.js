@@ -45,6 +45,11 @@ router.get('/menu',middlewareToken, (req, res) => {
                     displayName: 'Productos',
                     iconName: 'box',
                     route: '/productos',
+                },
+                {
+                    displayName: 'Producción 3D',
+                    iconName: 'box',
+                    route: '/stock3d',
                 }
             ];
             break;
