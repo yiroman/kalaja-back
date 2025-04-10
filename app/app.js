@@ -55,8 +55,9 @@ const sess = {
 	}
 };
 if(app.get('env') ==='development'){
-	sess.cookie.secure = true
-	sess.cookie.sameSite = 'none'
+	sess.cookie.secure = false
+	sess.cookie.sameSite = 'Lax'
+	console.log(sess.cookie.secure)
 }
 
 const dominiosPermitidos = () => {
@@ -71,7 +72,7 @@ const dominiosPermitidos = () => {
 		]
 	}
 	else {
-		console.log('app en desarrollo')
+
 		return [
 			'http://localhost:4200',
 			'https://kalaja-front-4yqv.vercel.app',
@@ -96,8 +97,9 @@ const corsOptions = (req, callback) => {
 
 if(app.get('env') === 'test' || app.get('env') === 'production'){
 	app.set('trust proxy', 1) // trust first proxy
-	sess.cookie.secure = true
-	sess.cookie.sameSite = 'none'
+	sess.cookie.secure = false
+	sess.cookie.sameSite = 'Lax'
+	console.log('app en produccion')
 }
 
 app.use(session(sess));
