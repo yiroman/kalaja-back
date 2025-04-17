@@ -65,14 +65,14 @@ const dominiosPermitidos = () => {
 		console.log('app en produccion')
 		return [
 			'http://localhost:4200',
-			'https://back.kalaja.com.mx'
+			'https://kalaja.com.mx'
 		]
 	}
 	else {
 		console.log('app en desarrollo')
 		return [
 			'http://localhost:4200',
-			'https://back.kalaja.com.mx'
+			'https://kalaja.com.mx'
 		]
 	}
 }
