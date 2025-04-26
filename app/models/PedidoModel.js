@@ -7,6 +7,9 @@ const PedidoSchema = new mongoose.Schema({
         producto: { type: String, required: true }, // Nombre del producto
         variante: { type: String }, // 🔹 Nueva propiedad: Variante del producto
         opcion: { type: String }, // 🔹 Nueva propiedad: Opción seleccionada
+        nombreProducto:{ type: String }, // Nombre del producto con variante y opción
+        nombreOpcion:{ type: String }, // Nombre de la opción seleccionada
+        nombreVariante:{ type: String }, // Nombre de la variante seleccionada
         cantidad: { type: Number, required: true }, // Cantidad solicitada
         precioUnitario: { type: Number, required: true }, // Precio del producto en el momento de la compra
         subtotal: { type: Number, required: true }, // Calculado como cantidad * precioUnitario

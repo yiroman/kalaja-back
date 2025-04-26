@@ -9,7 +9,7 @@ const ProductoSchema = new mongoose.Schema({
     variantes: [{
         nombre: { type: String, required: true }, // Ej: "Color", "Talla", "Capacidad"
         opciones: [{
-            valor: { type: String, required: true }, // Ej: "Negro", "M", "500ml"
+            nombreOpcion: { type: String, required: true }, // Ej: "Negro", "M", "500ml"
             stock: { type: Number, required: true, default: 0 }, // Stock de esta variante
             imagen: { type: String },
             precio_compra: {type: String}
