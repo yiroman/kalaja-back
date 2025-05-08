@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Produccion3DSchema = new mongoose.Schema({
     nombre: { type: String, required: true }, // nombre del producto
     cantidad: { type: Number, required: true },
+    fallidas: {type: Number},      // piezas defectuosas
+    stock: {type: Number},
 
     // Datos técnicos de producción
     gramos: { type: Number, required: true },

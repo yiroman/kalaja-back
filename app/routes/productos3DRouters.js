@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const producto = await ProductoModel.findById(req.params.id);
+        const producto = await Producto3DModel.findById(req.params.id);
         if (!producto) {
             return res.status(404).json({ code: 404, message: "Producto no encontrado" });
         }
@@ -94,11 +94,11 @@ router.put('/:id', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const producto = await ProductoModel.findById(req.params.id);
+        const producto = await Producto3DModel.findById(req.params.id);
         if (!producto) {
             return res.status(404).json({ code: 404, message: "Producto no encontrado" });
         }
-        return res.json(producto);
+        return respuestaHTTP(res, 200, "Producto encontrado", producto)
     } catch (e) {
         return res.status(500).json({ code: 500, message: `No se pudo obtener el producto: ${e.message}` });
     }
@@ -106,7 +106,7 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const producto = await ProductoModel.findById(req.params.id);
+        const producto = await Producto3DModel.findById(req.params.id);
         if (!producto) {
             return res.status(404).json({ code: 404, message: "Producto no encontrado" });
         }
@@ -205,7 +205,7 @@ router.put('/:id/stock', async (req, res) => {
     const cambios = req.body; // arreglo de combinaciones { varianteId, opcionId, nuevoStock, nuevoPrecio }
 
     try {
-        const producto = await ProductoModel.findById(id);
+        const producto = await Producto3DModel.findById(id);
 
         cambios.forEach(cambio => {
             const variante = producto.variantes.id(cambio.varianteId);
