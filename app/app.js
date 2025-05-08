@@ -27,6 +27,7 @@ const rolesRouter = require('./routes/rolesRouters')
 const dependenciasRouter = require('./routes/dependenciasRouters')
 const pedidosRouter = require('./routes/pedidosRouters')
 const productosRouter = require('./routes/productosRouters')
+const productos3DRouter = require('./routes/productos3DRouters')
 
 var app = express();
 app.set('trust proxy', 1);
@@ -119,6 +120,7 @@ app.use(`${prefixInterna}roles`, rolesRouter)
 app.use(`${prefixInterna}dependencias`, dependenciasRouter)
 app.use(`${prefixInterna}pedidos`, pedidosRouter)
 app.use(`${prefixInterna}productos`, productosRouter)
+app.use(`${prefixInterna}productos3d`, productos3DRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

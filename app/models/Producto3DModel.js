@@ -34,7 +34,7 @@ const Produccion3DSchema = new mongoose.Schema({
 
     // Metadatos
     fecha: { type: Date, default: Date.now },
-    operadorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }
+    // operadorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
 module.exports = Producto3DModel = mongoose.model('productos3d', Produccion3DSchema);
