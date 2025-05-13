@@ -217,7 +217,7 @@ router.post('/venta', async (req, res) => {
 
     // 1) Validación básica
     if (!_id || !cantidad || cantidad <= 0 || !precioVenta) {
-        return res.status(400).json({ error: 'Datos inválidos' });
+        return respuestaHTTP(res, 400, "Datos incompletos o inválidos", null);
     }
 
     // 2) Calcula total
@@ -232,11 +232,11 @@ router.post('/venta', async (req, res) => {
             { new: true, runValidators: true }
         );
         if (!produccion) {
-            return res.status(400).json({ error: 'Stock insuficiente' });
+            return respuestaHTTP(res, 400, "Stock insuficiente o producción no encontrada", null);
         }
     } catch (err) {
         console.error('Error ajustando stock:', err);
-        return res.status(500).json({ error: 'Error al actualizar stock' });
+        return respuestaHTTP(res, 500, "Error al registrar stock", err);
     }
 
     try {
@@ -248,7 +248,7 @@ router.post('/venta', async (req, res) => {
             total
         });
         // 5) Responde con el nuevo estado y el registro de venta
-        return res.status(201).json({ produccion, venta });
+        return respuestaHTTP(res, 200, "Lista de productos", venta);
     } catch (err) {
         console.error('Error al crear venta:', err);
         // 6) (Opcional) Revertir el stock si falla la creación de la venta
@@ -256,7 +256,7 @@ router.post('/venta', async (req, res) => {
             _id,
             { $inc: { stock: cantidad } }
         );
-        return res.status(500).json({ error: 'Error al registrar venta' });
+        return respuestaHTTP(res, 500, "Error al registrar venta", err);
     }
 });
 
