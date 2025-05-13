@@ -5,6 +5,7 @@ const express = require('express'),
 
 
 const Producto3DModel = require ('../models/Producto3DModel');
+const Venta3D = require ('../models/VentasModel');
 
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.post('/', async (req, res) => {
             nombre: data.nombre,
             cantidad: data.cantidad,
             fallidas: data.fallidas || 0,
+            regalados: data.regalo || 0,
             stock: data.cantidad || 0,
             gramos: data.gramos,
             precioFilamento: data.precioFilamento,
@@ -86,6 +88,7 @@ router.put('/:id', async (req, res) => {
         producto.labels = etiquetas;
         producto.categorias = categorias;
         producto.subcategorias = subcategorias;
+
 
         await producto.save();
         return res.json(producto);
@@ -152,6 +155,38 @@ router.patch('/:id/fallidas', async (req, res) => {
 });
 
 
+router.patch('/:id/regalo', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { cantidad } = req.body;
+
+        if (!cantidad || cantidad <= 0) {
+            return res.status(400).json({ error: 'Cantidad inválida' });
+        }
+
+        const produccion = await Producto3DModel.findById(id);
+        if (!produccion) {
+            return res.status(404).json({ error: 'Producción no encontrada' });
+        }
+
+        if (produccion.stock < cantidad) {
+            return res.status(400).json({ error: 'Stock insuficiente para descontar' });
+        }
+
+        // Actualizar valores
+        produccion.regalados += cantidad;
+        produccion.stock -= cantidad;
+        await produccion.save();
+
+        respuestaHTTP(res, 200, "Lista de productos", produccion)
+
+    } catch (error) {
+        console.error('Error al registrar fallidas:', error);
+        respuestaHTTP(res, 500, "Error al registrar fallidas", error);
+    }
+});
+
+
 router.patch('/:id/stock', async (req, res) => {
     try {
         const { id } = req.params;
@@ -177,6 +212,53 @@ router.patch('/:id/stock', async (req, res) => {
     }
 });
 
+router.post('/venta', async (req, res) => {
+    const { _id, cantidad, precioVenta } = req.body;
+
+    // 1) Validación básica
+    if (!_id || !cantidad || cantidad <= 0 || !precioVenta) {
+        return res.status(400).json({ error: 'Datos inválidos' });
+    }
+
+    // 2) Calcula total
+    const total = cantidad * precioVenta;
+
+    let produccion;
+    try {
+        // 3) Ajusta stock de forma atómica (solo si hay suficiente)
+        produccion = await Producto3DModel.findOneAndUpdate(
+            { _id: _id, stock: { $gte: cantidad } },
+            { $inc: { stock: -cantidad } },
+            { new: true, runValidators: true }
+        );
+        if (!produccion) {
+            return res.status(400).json({ error: 'Stock insuficiente' });
+        }
+    } catch (err) {
+        console.error('Error ajustando stock:', err);
+        return res.status(500).json({ error: 'Error al actualizar stock' });
+    }
+
+    try {
+        // 4) Registra la venta
+        const venta = await Venta3D.create({
+            produccionId: _id,
+            cantidad,
+            precioUnitario: precioVenta,
+            total
+        });
+        // 5) Responde con el nuevo estado y el registro de venta
+        return res.status(201).json({ produccion, venta });
+    } catch (err) {
+        console.error('Error al crear venta:', err);
+        // 6) (Opcional) Revertir el stock si falla la creación de la venta
+        await Producto3DModel.findByIdAndUpdate(
+            _id,
+            { $inc: { stock: cantidad } }
+        );
+        return res.status(500).json({ error: 'Error al registrar venta' });
+    }
+});
 
 
 module.exports = router;

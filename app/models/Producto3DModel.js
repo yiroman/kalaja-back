@@ -6,6 +6,7 @@ const Produccion3DSchema = new mongoose.Schema({
     cantidad: { type: Number, required: true },
     fallidas: {type: Number, default: 0},      // piezas defectuosas
     stock: {type: Number, default: 0},
+    regalados: {type: Number, default: 0},
 
     // Datos técnicos de producción
     gramos: { type: Number, required: true },
