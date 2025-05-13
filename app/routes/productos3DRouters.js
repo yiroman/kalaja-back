@@ -261,4 +261,65 @@ router.post('/venta', async (req, res) => {
 });
 
 
+router.get('/reporte/ventas', async (req, res) => {
+    try {
+        const ventas = await Venta3D.find({}).populate('produccionId');
+        const ventasMes = ventas.filter(venta => {
+            const fechaVenta = new Date(venta.fecha);
+            const fechaActual = new Date();
+            return (
+                fechaVenta.getFullYear() === fechaActual.getFullYear() &&
+                fechaVenta.getMonth() === fechaActual.getMonth()
+            );
+        } );
+        const totalVentasMes = ventasMes.reduce((acum, venta) => acum + venta.total, 0);
+        const ventasTotales = ventas.reduce((acum, venta) => acum + venta.total, 0);
+        const top5 = await Venta3D.aggregate([
+            // 1) Sumar unidades vendidas por producto
+            {
+                $group: {
+                    _id: "$produccionId",
+                    totalUnidades: { $sum: "$cantidad" }
+                }
+            },
+            // 2) Orden descendente
+            { $sort: { totalUnidades: -1 } },
+            // 3) Quedarnos sólo con los 5 primeros
+            { $limit: 5 },
+            // 4) Traer datos del producto
+            {
+                $lookup: {
+                    from: "productos3ds",        // nombre de la colección de productos
+                    localField: "_id",           // el ObjectId de produccionId
+                    foreignField: "_id",         // su _id en productos3ds
+                    as: "producto"
+                }
+            },
+            // Desenrollamos el array ‘producto’
+            { $unwind: "$producto" },
+            // 5) Proyectamos sólo los campos que nos importan
+            {
+                $project: {
+                    _id: 0,
+                    productoId: "$_id",
+                    nombre:       "$producto.nombre",
+                    totalUnidades: 1,
+                    precioVenta:  "$producto.precioVenta"
+                }
+            }
+        ]);
+        const reporte = {
+            totalVentas: ventas.length,
+            ventasTotales,
+            totalVentasMes: totalVentasMes,
+            ventasMes,
+
+            top5
+        };
+        return respuestaHTTP(res, 200, "Lista de ventas", reporte);
+    } catch (e) {
+        return res.status(500).json({ code: 500, message: `No se pudo obtener las ventas: ${e.message}` });
+    }
+});
+
 module.exports = router;
