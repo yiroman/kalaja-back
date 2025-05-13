@@ -1,2 +1,2 @@
-# electoral-stats
-Plataforma Electoral Geoestadística de propósito general
+# Kalaja Back
+# Kalaja Back is a simple and easy to use web application for managing your personal finances.
