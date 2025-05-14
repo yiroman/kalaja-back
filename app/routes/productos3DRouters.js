@@ -76,24 +76,30 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ code: 404, message: "Producto no encontrado" });
         }
 
-        const { nombre, descripcion, precio, categoria, imagen, atributosEspecificos, variantes, etiquetas, categorias, subcategorias } = req.body;
-
+        const { nombre, cantidad, gramos, stock, precioFilamento, horasImpresion, horasHombre, costoExtra, extras, precioVenta, plantillaTecnica } = req.body;
         producto.nombre = nombre;
-        producto.descripcion = descripcion;
-        producto.precio = precio;
-        producto.categoria = categoria;
-        producto.imagen = imagen;
-        producto.atributosEspecificos = atributosEspecificos;
-        producto.variantes = variantes;
-        producto.labels = etiquetas;
-        producto.categorias = categorias;
-        producto.subcategorias = subcategorias;
-
-
+        producto.cantidad = cantidad;
+        producto.gramos = gramos;
+        producto.stock = stock;
+        producto.precioFilamento = precioFilamento;
+        producto.horasImpresion = horasImpresion;
+        producto.horasHombre = horasHombre;
+        producto.costoExtra = costoExtra;
+        producto.extras = extras;
+        producto.precioVenta = precioVenta;
+        producto.plantillaTecnica = plantillaTecnica;
+        producto.fallidas = req.body.fallidas || 0;
+        producto.regalados = req.body.regalo || 0;
+        producto.costoLote = req.body.costoLote || 0;
+        producto.precioCostoPieza = req.body.precioCostoPieza || 0;
+        producto.utilidadPorPieza = req.body.utilidadPorPieza || 0;
+        producto.totalVenta = req.body.totalVenta || 0;
+        producto.utilidadReal = req.body.utilidadReal || 0;
         await producto.save();
-        return res.json(producto);
+
+        return respuestaHTTP(res, 200, "Producto actualizado", producto);
     } catch (e) {
-        return res.status(500).json({ code: 500, message: `No se pudo actualizar el producto: ${e.message}` });
+        return respuestaHTTP(res, 500, "Error al actualizar el producto", e);
     }
 });
 
