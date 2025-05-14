@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
             cantidad: data.cantidad,
             fallidas: data.fallidas || 0,
             regalados: data.regalo || 0,
-            stock: data.cantidad || 0,
+            stock: data.stock || 0,
             gramos: data.gramos,
             precioFilamento: data.precioFilamento,
             horasImpresion: data.horasImpresion,
