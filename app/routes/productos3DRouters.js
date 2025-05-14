@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const productos = await Producto3DModel.find({});
+        const productos = await Producto3DModel.find({}, { $sort: { nombre: 1 } },);
         return respuestaHTTP(res, 200, "Lista de productos", productos);
     } catch (e) {
         return res.status(500).json({ code: 500, message: `No se pudo obtener los productos: ${e.message}` });
