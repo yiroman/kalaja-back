@@ -281,39 +281,42 @@ router.get('/reporte/ventas', async (req, res) => {
         const totalVentasMes = ventasMes.reduce((acum, venta) => acum + venta.total, 0);
         const ventasTotales = ventas.reduce((acum, venta) => acum + venta.total, 0);
         const top5 = await Venta3D.aggregate([
-            // 1) Sumar unidades vendidas por producto
+            // 1) Agrupo por producto, sumo unidades y tomo un precio unitario
             {
                 $group: {
                     _id: "$produccionId",
-                    totalUnidades: { $sum: "$cantidad" }
+                    totalUnidades:  { $sum: "$cantidad" },
+                    precioUnitario: { $first: "$precioUnitario" }
                 }
             },
             // 2) Orden descendente
-            { $sort: { totalUnidades: -1 } },
-            // 3) Quedarnos sólo con los 5 primeros
+            { $sort:  { totalUnidades: -1 } },
+            // 3) Solo los 5 primeros
             { $limit: 5 },
-            // 4) Traer datos del producto
+            // 4) Hago lookup para obtener nombre u otros datos del producto
             {
                 $lookup: {
-                    from: "productos3ds",        // nombre de la colección de productos
-                    localField: "_id",           // el ObjectId de produccionId
-                    foreignField: "_id",         // su _id en productos3ds
-                    as: "producto"
+                    from:         "productos3ds",
+                    localField:   "_id",
+                    foreignField: "_id",
+                    as:           "producto"
                 }
             },
-            // Desenrollamos el array ‘producto’
             { $unwind: "$producto" },
-            // 5) Proyectamos sólo los campos que nos importan
+            // 5) Proyecto los campos que quiero en la salida
             {
                 $project: {
-                    _id: 0,
-                    productoId: "$_id",
-                    nombre:       "$producto.nombre",
-                    totalUnidades: 1,
-                    precioVenta:  "$producto.precioVenta"
+                    _id:            0,
+                    productoId:     "$_id",
+                    nombre:         "$producto.nombre",
+                    totalUnidades:  1,
+                    precioUnitario: 1,
+                    // opcional: calculo el total (€) de esa línea
+                    total:          { $multiply: ["$precioUnitario", "$totalUnidades"] }
                 }
             }
         ]);
+
         const reporte = {
             totalVentas: ventas.length,
             ventasTotales,
