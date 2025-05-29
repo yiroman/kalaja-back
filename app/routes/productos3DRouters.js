@@ -106,10 +106,21 @@ router.put('/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const producto = await Producto3DModel.findById(req.params.id);
+        const ventasProducto = await Venta3D.find({ produccionId: req.params.id });
         if (!producto) {
             return res.status(404).json({ code: 404, message: "Producto no encontrado" });
         }
-        return respuestaHTTP(res, 200, "Producto encontrado", producto)
+        const productoConVentas = {
+            ...producto.toObject(),
+            ventas: ventasProducto.map(venta => ({
+                _id: venta._id,
+                cantidad: venta.cantidad,
+                precioUnitario: venta.precioUnitario,
+                total: venta.total,
+                fecha: venta.fecha
+            }))
+        }
+        return respuestaHTTP(res, 200, "Producto encontrado", productoConVentas)
     } catch (e) {
         return res.status(500).json({ code: 500, message: `No se pudo obtener el producto: ${e.message}` });
     }
@@ -270,14 +281,16 @@ router.post('/venta', async (req, res) => {
 router.get('/reporte/ventas', async (req, res) => {
     try {
         const ventas = await Venta3D.find({}).populate('produccionId');
-        const ventasMes = ventas.filter(venta => {
-            const fechaVenta = new Date(venta.fecha);
-            const fechaActual = new Date();
-            return (
-                fechaVenta.getFullYear() === fechaActual.getFullYear() &&
-                fechaVenta.getMonth() === fechaActual.getMonth()
-            );
-        } );
+        const ventasMes = ventas
+            .filter(venta => {
+                const fechaVenta = new Date(venta.fecha);
+                const fechaActual = new Date();
+                return (
+                    fechaVenta.getFullYear() === fechaActual.getFullYear() &&
+                    fechaVenta.getMonth() === fechaActual.getMonth()
+                );
+            })
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         const totalVentasMes = ventasMes.reduce((acum, venta) => acum + venta.total, 0);
         const ventasTotales = ventas.reduce((acum, venta) => acum + venta.total, 0);
         const top5 = await Venta3D.aggregate([
