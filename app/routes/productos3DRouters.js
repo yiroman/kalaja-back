@@ -62,12 +62,66 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const productos = await Producto3DModel.find({}).sort({ nombre: 1 });
+        const productos = await Producto3DModel.find({}).sort({ updatedAt: -1 });
         return respuestaHTTP(res, 200, "Lista de productos", productos);
     } catch (e) {
         return res.status(500).json({ code: 500, message: `No se pudo obtener los productos: ${e.message}` });
     }
 });
+
+router.get('/produccion', async (req, res) => {
+    try {
+        const hoy = new Date();
+        const diaActual = hoy.getDay(); // 0 = domingo ... 6 = sábado
+        const diasDesdeSabado = (diaActual - 6 + 7) % 7;
+        const sabadoActual = new Date(hoy);
+        sabadoActual.setDate(hoy.getDate() - diasDesdeSabado);
+        sabadoActual.setHours(0, 0, 0, 0);
+
+// Fecha mínima (sábado hace 4 semanas)
+        const fechaMinima = new Date(sabadoActual);
+        fechaMinima.setDate(fechaMinima.getDate() - 7 * 3); // Incluye 4 semanas
+
+// Agrupamos por "semana de sábado a viernes"
+        const productos = await Producto3DModel.aggregate([
+            {
+                $match: {
+                    updatedAt: { $gte: fechaMinima }
+                }
+            },
+            {
+                $addFields: {
+                    semanaInicio: {
+                        $dateTrunc: {
+                            date: "$updatedAt",
+                            unit: "week",
+                            binSize: 1,
+                            startOfWeek: "saturday",
+                            timezone: "America/Mexico_City"
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$semanaInicio",
+                    productos: { $push: "$$ROOT" }
+                }
+            },
+            {
+                $sort: { _id: -1 } // semanas recientes primero
+            }
+        ]);
+
+        // Formateamos la respuesta
+        respuestaHTTP(res, 200, "Lista de productos", productos);
+    } catch (e) {
+        return res.status(500).json({ code: 500, message: `No se pudo obtener los productos: ${e.message}` });
+    }
+});
+
+
+
 
 router.put('/:id', async (req, res) => {
     try {
