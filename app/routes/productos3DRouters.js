@@ -69,56 +69,44 @@ router.get('/', async (req, res) => {
     }
 });
 
+
 router.get('/produccion', async (req, res) => {
     try {
-        const hoy = new Date();
-        const diaActual = hoy.getDay(); // 0 = domingo ... 6 = sábado
-        const diasDesdeSabado = (diaActual - 6 + 7) % 7;
-        const sabadoActual = new Date(hoy);
-        sabadoActual.setDate(hoy.getDate() - diasDesdeSabado);
-        sabadoActual.setHours(0, 0, 0, 0);
+        // Obtener fecha base desde query param o usar hoy
+        const baseDate = req.query.inicio ? new Date(req.query.inicio) : new Date();
 
-// Fecha mínima (sábado hace 4 semanas)
-        const fechaMinima = new Date(sabadoActual);
-        fechaMinima.setDate(fechaMinima.getDate() - 7 * 3); // Incluye 4 semanas
+        // 🗓 Calcular el sábado más cercano hacia atrás (inicio de la semana)
+        const dia = baseDate.getDay(); // 0 = Domingo, 6 = Sábado
+        const diferenciaASabado = (dia + 1) % 7; // cuántos días restar para llegar al sábado anterior
+        const fechaInicio = new Date(baseDate);
+        fechaInicio.setDate(baseDate.getDate() - diferenciaASabado);
 
-// Agrupamos por "semana de sábado a viernes"
-        const productos = await Producto3DModel.aggregate([
-            {
-                $match: {
-                    updatedAt: { $gte: fechaMinima }
-                }
-            },
-            {
-                $addFields: {
-                    semanaInicio: {
-                        $dateTrunc: {
-                            date: "$updatedAt",
-                            unit: "week",
-                            binSize: 1,
-                            startOfWeek: "saturday",
-                            timezone: "America/Mexico_City"
-                        }
+        // 📆 Fecha fin = 7 días después
+        const fechaFin = new Date(fechaInicio);
+        fechaFin.setDate(fechaInicio.getDate() + 7);
+
+        // Buscar productos con al menos una producción dentro del rango
+        const productos = await Producto3DModel.find({
+            produccion: {
+                $elemMatch: {
+                    fechaProduccion: {
+                        $gte: fechaInicio,
+                        $lt: fechaFin
                     }
                 }
-            },
-            {
-                $group: {
-                    _id: "$semanaInicio",
-                    productos: { $push: "$$ROOT" }
-                }
-            },
-            {
-                $sort: { _id: -1 } // semanas recientes primero
             }
-        ]);
+        }).sort({ updatedAt: -1 });
 
-        // Formateamos la respuesta
-        respuestaHTTP(res, 200, "Lista de productos", productos);
+        return respuestaHTTP(res, 200, "Producción semanal", {
+            rango: { inicio: fechaInicio, fin: fechaFin },
+            productos
+        });
+
     } catch (e) {
         return res.status(500).json({ code: 500, message: `No se pudo obtener los productos: ${e.message}` });
     }
 });
+
 
 
 
@@ -271,17 +259,26 @@ router.patch('/:id/stock', async (req, res) => {
         if (!produccion) {
             return res.status(404).json({ error: 'Producción no encontrada' });
         }
-        // Actualizar valores
+
+        // Actualizar el stock
         produccion.stock += cantidad;
+
+        produccion.produccion.push({
+            cantidad,
+            fechaProduccion: new Date()
+        });
+
+
         await produccion.save();
 
-        respuestaHTTP(res, 200, "Lista de productos", produccion)
+        respuestaHTTP(res, 200, "Stock y producción actualizados", produccion)
 
     } catch (error) {
-        console.error('Error al registrar stock:', error);
-        respuestaHTTP(res, 500, "Error al registrar stock", error);
+        console.error('Error al registrar stock y producción:', error);
+        respuestaHTTP(res, 500, "Error al registrar stock y producción", error);
     }
 });
+
 
 router.post('/venta', async (req, res) => {
     const { _id, cantidad, precioVenta } = req.body;

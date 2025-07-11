@@ -39,10 +39,10 @@ const Produccion3DSchema = new mongoose.Schema({
     fecha: { type: Date, default: Date.now },
     // operadorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }
 
-    produccion:{
-        cantidad: { type: Number, default: 0 }, // cantidad producida
-        fechaProduccion: { type: Date, default: Date.now }, // fecha de producción
-    }
+    produccion: [{
+        cantidad: { type: Number, required: true },
+        fechaProduccion: { type: Date, default: Date.now },
+    }]
 }, { timestamps: true });
 
 module.exports = Producto3DModel = mongoose.model('productos3d', Produccion3DSchema);
