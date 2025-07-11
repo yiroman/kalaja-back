@@ -6,6 +6,7 @@ const express = require('express'),
 
 const Producto3DModel = require ('../models/Producto3DModel');
 const Venta3D = require ('../models/VentasModel');
+const HistorialProduccion = require('../models/ProduccionModel');
 
 
 const router = express.Router();
@@ -126,6 +127,7 @@ router.get('/produccion', async (req, res) => {
                 }
             }
         ]);
+
 
         return respuestaHTTP(res, 200, "Producción semanal por producto", {
             rango: { inicio: fechaInicio, fin: fechaFin },
@@ -300,7 +302,13 @@ router.patch('/:id/stock', async (req, res) => {
             cantidad,
             fechaProduccion: new Date()
         });
-
+        const historial = new HistorialProduccion({
+            productoId: produccion._id,
+            nombreProducto: produccion.nombre,
+            cantidad,
+            fechaProduccion: new Date() // o personalizada
+        });
+        await historial.save();
 
         await produccion.save();
 
