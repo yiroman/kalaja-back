@@ -72,38 +72,71 @@ router.get('/', async (req, res) => {
 
 router.get('/produccion', async (req, res) => {
     try {
-        // Obtener fecha base desde query param o usar hoy
+        // Calcular el rango de la semana (desde sábado hasta el siguiente viernes)
         const baseDate = req.query.inicio ? new Date(req.query.inicio) : new Date();
-
-        // 🗓 Calcular el sábado más cercano hacia atrás (inicio de la semana)
-        const dia = baseDate.getDay(); // 0 = Domingo, 6 = Sábado
-        const diferenciaASabado = (dia + 1) % 7; // cuántos días restar para llegar al sábado anterior
+        const dia = baseDate.getDay(); // 0=Domingo, ..., 6=Sábado
+        const diferenciaASabado = (dia + 1) % 7;
         const fechaInicio = new Date(baseDate);
         fechaInicio.setDate(baseDate.getDate() - diferenciaASabado);
-
-        // 📆 Fecha fin = 7 días después
         const fechaFin = new Date(fechaInicio);
         fechaFin.setDate(fechaInicio.getDate() + 7);
 
-        // Buscar productos con al menos una producción dentro del rango
-        const productos = await Producto3DModel.find({
-            produccion: {
-                $elemMatch: {
-                    fechaProduccion: {
-                        $gte: fechaInicio,
-                        $lt: fechaFin
+        const productos = await Producto3DModel.aggregate([
+            // Filtrar productos que tengan al menos una producción en la semana
+            {
+                $match: {
+                    produccion: {
+                        $elemMatch: {
+                            fechaProduccion: { $gte: fechaInicio, $lt: fechaFin }
+                        }
                     }
                 }
+            },
+            // Filtrar el array 'produccion' por la semana
+            {
+                $addFields: {
+                    produccion: {
+                        $filter: {
+                            input: "$produccion",
+                            as: "p",
+                            cond: {
+                                $and: [
+                                    { $gte: ["$$p.fechaProduccion", fechaInicio] },
+                                    { $lt: ["$$p.fechaProduccion", fechaFin] }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            // Calcular el total de piezas producidas por producto en la semana
+            {
+                $addFields: {
+                    totalProduccionSemana: { $sum: "$produccion.cantidad" }
+                }
+            },
+            // Opcional: proyectar solo lo necesario
+            {
+                $project: {
+                    nombre: 1,
+                    precioVenta: 1,
+                    stock: 1,
+                    totalProduccionSemana: 1,
+                    produccion: 1
+                }
             }
-        }).sort({ updatedAt: -1 });
+        ]);
 
-        return respuestaHTTP(res, 200, "Producción semanal", {
+        return respuestaHTTP(res, 200, "Producción semanal por producto", {
             rango: { inicio: fechaInicio, fin: fechaFin },
             productos
         });
 
     } catch (e) {
-        return res.status(500).json({ code: 500, message: `No se pudo obtener los productos: ${e.message}` });
+        return res.status(500).json({
+            code: 500,
+            message: `No se pudo obtener la producción: ${e.message}`
+        });
     }
 });
 
