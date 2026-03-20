@@ -28,6 +28,8 @@ const dependenciasRouter = require('./routes/dependenciasRouters')
 const pedidosRouter = require('./routes/pedidosRouters')
 const productosRouter = require('./routes/productosRouters')
 const productos3DRouter = require('./routes/productos3DRouters')
+const odooRouter = require('./routes/odooRouters')
+const ventasOdooRouter = require('./routes/ventasOdooRouters')
 
 var app = express();
 app.set('trust proxy', 1);
@@ -121,6 +123,9 @@ app.use(`${prefixInterna}dependencias`, dependenciasRouter)
 app.use(`${prefixInterna}pedidos`, pedidosRouter)
 app.use(`${prefixInterna}productos`, productosRouter)
 app.use(`${prefixInterna}productos3d`, productos3DRouter)
+
+app.use(`${prefixInterna}ventas_odoo`, ventasOdooRouter)
+app.use(`${prefixExterna}odoo`, odooRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

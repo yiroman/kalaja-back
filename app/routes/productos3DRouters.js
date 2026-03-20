@@ -71,12 +71,12 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/produccion', async (req, res) => {
+router.post('/produccion', async (req, res) => {
     try {
         // Calcular el rango de la semana (desde sábado hasta el siguiente viernes)
-        const baseDate = req.query.inicio ? new Date(req.query.inicio) : new Date();
+        const baseDate = req.body.inicio ? new Date(req.body.inicio) : new Date();
         const dia = baseDate.getDay(); // 0=Domingo, ..., 6=Sábado
-        const diferenciaASabado = (dia + 1) % 7;
+        const diferenciaASabado = (dia + 1) % 7; // Días hasta el sábado (0=Domingo, 1=Lunes, ..., 6=Sábado)
         const fechaInicio = new Date(baseDate);
         fechaInicio.setDate(baseDate.getDate() - diferenciaASabado);
         const fechaFin = new Date(fechaInicio);

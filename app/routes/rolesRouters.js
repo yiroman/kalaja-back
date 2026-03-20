@@ -50,6 +50,11 @@ router.get('/menu',middlewareToken, (req, res) => {
                     displayName: 'Producción 3D',
                     iconName: 'box',
                     route: '/stock3d',
+                },
+                {
+                    displayName: 'Ventas Odoo',
+                    iconName: 'shopping-cart',
+                    route: '/ventas',
                 }
             ];
             break;

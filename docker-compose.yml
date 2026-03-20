@@ -11,6 +11,9 @@ services:
       MONGO_URL: "mongodb://kalaja_user:TBQNXOCYmeQ_84bmPTl4n9@db-kalaja/kalaja_db?authSource=admin&readPreference=primary&ssl=false&directConnection=true"
       JWT_KEY: "ia*DKhj.g9@ho¡y729i-_¿!n3YjDhsL&3xVhGo"
       SECRET_COOKIE: "SADHUIH1sdf32423sasd4&%$#01E@IOUQSDNKL"
+      ODOO_URL: "https://tienda.kalaja.com.mx/"
+      ODOO_API_KEY: "23fd82952260d8caa97e848a231701268fa8245a"
+      ODOO_DB: "kalaja_3d"
     depends_on:
       - db-kalaja
       - redis-kalaja
