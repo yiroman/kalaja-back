@@ -15,7 +15,7 @@ const { respuestaHTTP } = require('../utils/errores');
 // })
 
 
-router.get('/menu',middlewareToken, (req, res) => {
+router.get('/menu', middlewareToken, (req, res) => {
     const token = req.token;
 
     let menu;
@@ -36,21 +36,21 @@ router.get('/menu',middlewareToken, (req, res) => {
                     iconName: 'user',
                     route: '/usuarios',
                 },
-                {
-                    displayName: 'Pedidos',
-                    iconName: 'box',
-                    route: '/pedidos',
-                },
+                // {
+                //     displayName: 'Pedidos',
+                //     iconName: 'box',
+                //     route: '/pedidos',
+                // },
                 {
                     displayName: 'Productos',
                     iconName: 'box',
                     route: '/productos',
                 },
-                {
-                    displayName: 'Producción 3D',
-                    iconName: 'box',
-                    route: '/stock3d',
-                },
+                // {
+                //     displayName: 'Producción 3D',
+                //     iconName: 'box',
+                //     route: '/stock3d',
+                // },
                 {
                     displayName: 'Ventas Odoo',
                     iconName: 'shopping-cart',
@@ -87,7 +87,7 @@ router.get('/menu',middlewareToken, (req, res) => {
                     iconName: 'home',
                     route: '/starter',
                 }
-               
+
             ];
             break;
         // ROM
@@ -102,7 +102,7 @@ router.get('/menu',middlewareToken, (req, res) => {
                     route: '/starter',
                 }
             ]
-             
+
             break;
     }
     res.json(menu);
